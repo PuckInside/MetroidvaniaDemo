@@ -1,6 +1,9 @@
 [gd_scene format=3 uid="uid://bfknycm3aigab"]
 
 [ext_resource type="Texture2D" uid="uid://b723b5xds5o0i" path="res://Assets/DebugTiles.png" id="1_mc1dd"]
+[ext_resource type="Script" uid="uid://pwcpoqdiubwm" path="res://Entity/Player/player.gd" id="1_viyt1"]
+[ext_resource type="Script" uid="uid://b6b83mb7xqqs7" path="res://Entity/Player/player_input_controller.gd" id="2_x1f5c"]
+[ext_resource type="Script" uid="uid://3ckotajb64kh" path="res://Components/movement_component.gd" id="5_rawpq"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_x1f5c"]
 radius = 8.0
@@ -21,13 +24,46 @@ animations = [{
 "speed": 5.0
 }]
 
-[node name="Player" type="CharacterBody2D" unique_id=1724247843]
+[sub_resource type="GDScript" id="GDScript_viyt1"]
+resource_name = "PlayerAnimation"
+script/source = "extends AnimatedSprite2D
+class_name PlayerAnimation
+
+@export var player: CharacterBody2D
+
+var _player_state: PlayerStateResource.States = PlayerStateResource.States.IDLE
+
+func _ready() -> void:
+	assert(player is CharacterBody2D)
+
+func _process(_delta: float) -> void:
+	if player.velocity.x:
+		flip_h = player.velocity.x < 0.0
+	
+	if _player_state == PlayerStateResource.States.IDLE:
+		play(\"idle\")
+"
+
+[node name="Player" type="CharacterBody2D" unique_id=1724247843 node_paths=PackedStringArray("input", "movement")]
+script = ExtResource("1_viyt1")
+input = NodePath("PlayerInputController")
+movement = NodePath("MovementComponent")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1791181917]
 position = Vector2(0, -25)
 shape = SubResource("CapsuleShape2D_x1f5c")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=580575712]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=580575712 node_paths=PackedStringArray("player")]
 position = Vector2(0, -32)
 sprite_frames = SubResource("SpriteFrames_viyt1")
 animation = &"idle"
+script = SubResource("GDScript_viyt1")
+player = NodePath("..")
+
+[node name="PlayerInputController" type="Node" parent="." unique_id=691759533]
+script = ExtResource("2_x1f5c")
+metadata/_custom_type_script = "uid://b6b83mb7xqqs7"
+
+[node name="MovementComponent" type="Node" parent="." unique_id=2048015990]
+script = ExtResource("5_rawpq")
+metadata/_custom_type_script = "uid://3ckotajb64kh"
