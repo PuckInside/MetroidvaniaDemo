@@ -459,13 +459,14 @@ tile_map_data = PackedByteArray("AAD0/wAAAAAEAAAAAAD0/wEAAAAEAAEAAAD1/wAAAAAFAAA
 tile_set = SubResource("TileSet_707cn")
 
 [node name="Player" parent="." unique_id=1724247843 instance=ExtResource("2_au00k")]
-position = Vector2(0, -35)
+position = Vector2(0, -68)
 
-[node name="Camera2D" type="Camera2D" parent="Player" unique_id=1707350407]
+[node name="Camera2D" type="Camera2D" parent="Player" unique_id=857426969]
 offset = Vector2(0, -28)
-zoom = Vector2(5, 5)
+zoom = Vector2(6, 6)
 process_callback = 0
 position_smoothing_enabled = true
+position_smoothing_speed = 6.0
 drag_horizontal_enabled = true
 drag_vertical_enabled = true
 drag_left_margin = 0.1
