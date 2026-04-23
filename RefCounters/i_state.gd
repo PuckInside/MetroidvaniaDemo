@@ -4,6 +4,9 @@ class_name IState
 var name: String = "State"
 var state_machine: StateMachine
 
+static func is_triggered() -> bool:
+	return false
+
 func _init() -> void:
 	assert(false, "Нельзя создавать экземпляр у интерфеса")
 

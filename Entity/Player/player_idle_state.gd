@@ -2,6 +2,7 @@ extends IState
 class_name PlayerIdleState
 
 const NAME := "Idle"
+const JUMP_BUFFER := 0.120 #seconds
 
 var _player: PlayerController
 var _brake_speed: float
@@ -17,12 +18,12 @@ func physics_update(_delta: float) -> void:
 	if not _player.on_floor:
 		_player.velocity = Movement.get_gravity(_player.velocity, _delta)
 	
-	if Input.is_action_pressed("left") or Input.is_action_pressed("right"):
+	if PlayerWalkState.is_triggered():
 		state_machine.change_state(PlayerWalkState.NAME)
 		return
-	else:
-		_player.velocity = Movement.get_brake(_player.velocity, _brake_speed)
+	
+	_player.velocity = Movement.get_brake(_player.velocity, _brake_speed)
 
 func handle_input(_event: InputEvent) -> void:
-	if _event.is_action_pressed("jump"):
-		state_machine.change_state(PlayerJumpState.NAME)
+	if PlayerJumpState.is_triggered():
+		_player.jump_buffer.start(JUMP_BUFFER)

@@ -7,6 +7,9 @@ var _player: PlayerController
 var _jump_height: float
 var _air_speed: float
 
+static func is_triggered() -> bool:
+	return Input.is_action_just_pressed("jump")
+
 func _init(body: PlayerController, jump_height: float, air_speed: float) -> void:
 	assert(body is PlayerController, "Ссылка на игрока не должна быть пустым")
 	
@@ -22,7 +25,7 @@ func physics_update(_delta: float) -> void:
 		state_machine.change_state(PlayerIdleState.NAME)
 		return
 	
-	var direction = _get_direction()
+	var direction = _player.get_direction()
 	if direction:
 		_player.velocity = Movement.get_move(_player.velocity, direction, _air_speed)
 	else:
@@ -48,11 +51,3 @@ func enter(_previous_state: String) -> void:
 
 func exit() -> void:
 	_player.velocity = Movement.get_jump_cut(_player.velocity)
-
-func _get_direction() -> float:
-	if Input.is_action_pressed("left"):
-		return -1.0
-	if Input.is_action_pressed("right"):
-		return 1.0
-	
-	return 0.0
