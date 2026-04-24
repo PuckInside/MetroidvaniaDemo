@@ -35,6 +35,10 @@ func handle_input(_event: InputEvent) -> void:
 	if _event.is_action_released("jump"):
 		state_machine.change_state(PlayerIdleState.NAME)
 		return
+	
+	if PlayerDashState.is_triggered():
+		state_machine.change_state(PlayerDashState.NAME)
+		return
 
 func enter(_previous_state: String) -> void:
 	if _player.on_floor:

@@ -27,3 +27,8 @@ func physics_update(_delta: float) -> void:
 func handle_input(_event: InputEvent) -> void:
 	if PlayerJumpState.is_triggered():
 		_player.jump_buffer.start(JUMP_BUFFER)
+		return
+	
+	if PlayerDashState.is_triggered():
+		state_machine.change_state(PlayerDashState.NAME)
+		return

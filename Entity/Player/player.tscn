@@ -3,6 +3,10 @@
 [ext_resource type="Texture2D" uid="uid://b723b5xds5o0i" path="res://Assets/DebugTiles.png" id="1_mc1dd"]
 [ext_resource type="Script" uid="uid://cifgphpjlyct2" path="res://Entity/Player/player_controller.gd" id="1_x1f5c"]
 
+[sub_resource type="Curve" id="Curve_x1f5c"]
+_data = [Vector2(0, 0.99245286), 0.0, 0.0, 0, 0, Vector2(0.8854166, 0.84150946), -0.5313206, -0.5313206, 0, 0, Vector2(1, 0.50188684), -1.8547919, 0.0, 0, 0]
+point_count = 3
+
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_x1f5c"]
 radius = 8.0
 height = 50.0
@@ -41,10 +45,12 @@ func flip_spite(velocity: Vector2) -> void:
 		flip_h = true
 "
 
-[node name="Player" type="CharacterBody2D" unique_id=1724247843 node_paths=PackedStringArray("coyote_timer", "jump_buffer")]
+[node name="Player" type="CharacterBody2D" unique_id=1724247843 node_paths=PackedStringArray("coyote_timer", "jump_buffer", "dash_cooldown")]
 script = ExtResource("1_x1f5c")
 coyote_timer = NodePath("CoyoteTime")
 jump_buffer = NodePath("JumpBuffer")
+dash_curve = SubResource("Curve_x1f5c")
+dash_cooldown = NodePath("DashCooldown")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1791181917]
 position = Vector2(0, -25)
@@ -63,4 +69,8 @@ one_shot = true
 
 [node name="JumpBuffer" type="Timer" parent="." unique_id=380468885]
 wait_time = 0.1
+one_shot = true
+
+[node name="DashCooldown" type="Timer" parent="." unique_id=1870535715]
+wait_time = 0.125
 one_shot = true
