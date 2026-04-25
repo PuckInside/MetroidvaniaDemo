@@ -2,6 +2,8 @@
 
 [ext_resource type="Texture2D" uid="uid://b723b5xds5o0i" path="res://Assets/DebugTiles.png" id="1_mc1dd"]
 [ext_resource type="Script" uid="uid://cifgphpjlyct2" path="res://Entity/Player/player_controller.gd" id="1_x1f5c"]
+[ext_resource type="Script" uid="uid://6m8hgpvsvxe0" path="res://Node/health.gd" id="3_qb0yx"]
+[ext_resource type="Script" uid="uid://d0urpb7583m53" path="res://Node/hurtbox.gd" id="3_viyt1"]
 
 [sub_resource type="Curve" id="Curve_x1f5c"]
 _data = [Vector2(0, 0.99245286), 0.0, 0.0, 0, 0, Vector2(0.8854166, 0.84150946), -0.5313206, -0.5313206, 0, 0, Vector2(1, 0.50188684), -1.8547919, 0.0, 0, 0]
@@ -10,6 +12,10 @@ point_count = 3
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_x1f5c"]
 radius = 8.0
 height = 50.0
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_rawpq"]
+radius = 6.0
+height = 42.0
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_qb0yx"]
 atlas = ExtResource("1_mc1dd")
@@ -45,8 +51,9 @@ func flip_spite(velocity: Vector2) -> void:
 		flip_h = true
 "
 
-[node name="Player" type="CharacterBody2D" unique_id=1724247843 node_paths=PackedStringArray("coyote_timer", "jump_buffer", "dash_cooldown")]
+[node name="Player" type="CharacterBody2D" unique_id=1724247843 node_paths=PackedStringArray("health", "coyote_timer", "jump_buffer", "dash_cooldown")]
 script = ExtResource("1_x1f5c")
+health = NodePath("Health")
 coyote_timer = NodePath("CoyoteTime")
 jump_buffer = NodePath("JumpBuffer")
 dash_curve = SubResource("Curve_x1f5c")
@@ -56,12 +63,26 @@ dash_cooldown = NodePath("DashCooldown")
 position = Vector2(0, -25)
 shape = SubResource("CapsuleShape2D_x1f5c")
 
+[node name="HurtBox" type="Area2D" parent="." unique_id=777152150 node_paths=PackedStringArray("health")]
+script = ExtResource("3_viyt1")
+health = NodePath("../Health")
+invincible = true
+metadata/_custom_type_script = "uid://d0urpb7583m53"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HurtBox" unique_id=1449747364]
+position = Vector2(0, -24)
+shape = SubResource("CapsuleShape2D_rawpq")
+
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=580575712 node_paths=PackedStringArray("player")]
 position = Vector2(0, -32)
 sprite_frames = SubResource("SpriteFrames_viyt1")
 animation = &"idle"
 script = SubResource("GDScript_x1f5c")
 player = NodePath("..")
+
+[node name="Health" type="Node" parent="." unique_id=1294675357]
+script = ExtResource("3_qb0yx")
+metadata/_custom_type_script = "uid://6m8hgpvsvxe0"
 
 [node name="CoyoteTime" type="Timer" parent="." unique_id=1453210619]
 wait_time = 0.075

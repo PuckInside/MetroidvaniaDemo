@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://b723b5xds5o0i" path="res://Assets/DebugTiles.png" id="1_skmq4"]
 [ext_resource type="PackedScene" uid="uid://bfknycm3aigab" path="res://Entity/Player/player.tscn" id="2_au00k"]
+[ext_resource type="Script" uid="uid://ckwnd0fgcmkc8" path="res://Node/hitbox.gd" id="3_707cn"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_au00k"]
 texture = ExtResource("1_skmq4")
@@ -452,6 +453,24 @@ texture = ExtResource("1_skmq4")
 physics_layer_0/collision_layer = 1
 sources/0 = SubResource("TileSetAtlasSource_au00k")
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_mq1bj"]
+atlas = ExtResource("1_skmq4")
+region = Rect2(256, 128, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_iwv7r"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mq1bj")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_kt01x"]
+size = Vector2(10, 14)
+
 [node name="World" type="Node2D" unique_id=1603821883]
 
 [node name="TileMapLayer" type="TileMapLayer" parent="." unique_id=1020040591]
@@ -473,3 +492,16 @@ drag_left_margin = 0.1
 drag_top_margin = 0.35
 drag_right_margin = 0.1
 drag_bottom_margin = 0.3
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=2021747950]
+position = Vector2(72, -7)
+sprite_frames = SubResource("SpriteFrames_iwv7r")
+
+[node name="Hitbox" type="Area2D" parent="AnimatedSprite2D" unique_id=1776252165]
+script = ExtResource("3_707cn")
+damage = 20
+metadata/_custom_type_script = "uid://ckwnd0fgcmkc8"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AnimatedSprite2D/Hitbox" unique_id=587543917]
+position = Vector2(0, 1)
+shape = SubResource("RectangleShape2D_kt01x")

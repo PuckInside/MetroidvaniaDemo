@@ -10,12 +10,14 @@ const NO_JUMPING_MAP := [PlayerDashState.NAME, ]
 @export var dash_distance: float = 5 * 16.0
 
 @export_group("Dependency")
+@export var health: Health
 @export var coyote_timer: Timer
 @export var jump_buffer: Timer
 @export var dash_curve: Curve
 @export var dash_cooldown: Timer
 
 var state_machine: StateMachine = StateMachine.new()
+
 var last_direction: float = 1.0
 var double_jump_available: bool = false
 var dash_available: bool = false
@@ -32,10 +34,14 @@ var on_floor: bool = false:
 			dash_available = true
 
 func _ready() -> void:
+	assert(health is Health)
 	assert(coyote_timer is Timer)
 	assert(jump_buffer is Timer)
 	assert(dash_curve is Curve)
 	assert(dash_cooldown is Timer)
+	
+	health.health_changed.connect(_on_health_changed)
+	health.death.connect(_on_dealth)
 	
 	var init_state := PlayerIdleState.new(self, brake_speed)
 	state_machine.add_state(init_state)
@@ -47,11 +53,8 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	_coyote_time_update()
+	_jump_buffering()
 	state_machine.physics_update(delta)
-	
-	if not state_machine.get_state_name() in NO_JUMPING_MAP:
-		_jump_buffering()
-	
 	move_and_slide()
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -64,12 +67,20 @@ func _coyote_time_update() -> void:
 		on_floor = false
 
 func _jump_buffering() -> void:
+	if state_machine.get_state_name() in NO_JUMPING_MAP:
+		return
 	if jump_buffer.is_stopped():
 		return
 	
 	if on_floor or double_jump_available:
 		jump_buffer.stop()
 		state_machine.change_state(PlayerJumpState.NAME)
+
+func _on_dealth() -> void:
+	print("Dealth!")
+
+func _on_health_changed(current_health: int) -> void:
+	print(current_health)
 
 func get_direction() -> float:
 	var is_left = Input.is_action_pressed("left")

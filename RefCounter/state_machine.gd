@@ -21,8 +21,6 @@ func change_state(state_name: String) -> void:
 		_current_state.enter(_current_state.name)
 	else:
 		push_warning("State not found: " + state_name)
-	
-	print(get_state_name())
 
 func update(_delta: float) -> void:
 	if _current_state:
