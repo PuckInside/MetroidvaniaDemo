@@ -1,0 +1,73 @@
+[gd_scene format=3 uid="uid://ddg5li18hlxo6"]
+
+[ext_resource type="Texture2D" uid="uid://b723b5xds5o0i" path="res://Assets/DebugTiles.png" id="1_r4m0d"]
+[ext_resource type="Script" uid="uid://ckwnd0fgcmkc8" path="res://Node/hitbox.gd" id="2_f4ald"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mq1bj"]
+atlas = ExtResource("1_r4m0d")
+region = Rect2(256, 128, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_iwv7r"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mq1bj")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="GDScript" id="GDScript_f4ald"]
+resource_name = "Spike"
+script/source = "extends AnimatedSprite2D
+class_name Spike
+
+@export var force_height: float = 1 * 16.0
+@export var force_velocity: float = 300.0
+@export var disable_duration: float = 0.3
+@export var damage: int = 20
+
+func _ready() -> void:
+	$Hitbox.damage = damage
+	$Hitbox.area_entered.connect(_on_area_entered)
+
+func _on_area_entered(hurtbox: HurtBox) -> void:
+	if hurtbox.owner is PlayerController:
+		var player = (hurtbox.owner as PlayerController)
+		
+		var spike_pos = self.global_position 
+		var player_pos = player.global_position
+		var direction = sign(player_pos.x - spike_pos.x)
+		
+		var velocity = Vector2(direction * force_velocity, 0.0)
+		velocity = Movement.get_jump(velocity, force_height)
+		(hurtbox.owner as PlayerController).force_knockback(velocity, disable_duration)
+"
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_au00k"]
+radius = 5.0
+height = 17.0
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_707cn"]
+radius = 4.0
+height = 14.0
+
+[node name="Spike" type="AnimatedSprite2D" unique_id=565945566]
+sprite_frames = SubResource("SpriteFrames_iwv7r")
+script = SubResource("GDScript_f4ald")
+
+[node name="Hitbox" type="Area2D" parent="." unique_id=287194322]
+script = ExtResource("2_f4ald")
+damage = 20
+metadata/_custom_type_script = "uid://ckwnd0fgcmkc8"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox" unique_id=1361402533]
+position = Vector2(0, 1)
+shape = SubResource("CapsuleShape2D_au00k")
+
+[node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=1201109229]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D" unique_id=1919474056]
+position = Vector2(0, 1)
+shape = SubResource("CapsuleShape2D_707cn")

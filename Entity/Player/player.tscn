@@ -10,12 +10,11 @@ _data = [Vector2(0, 0.99245286), 0.0, 0.0, 0, 0, Vector2(0.8854166, 0.84150946),
 point_count = 3
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_x1f5c"]
-radius = 8.0
+radius = 7.0
 height = 50.0
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_rawpq"]
-radius = 6.0
-height = 42.0
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_viyt1"]
+size = Vector2(18, 45)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_qb0yx"]
 atlas = ExtResource("1_mc1dd")
@@ -42,12 +41,12 @@ func _ready() -> void:
 	assert(player is PlayerController)
 
 func _process(_delta: float) -> void:
-	flip_spite(player.velocity)
+	flip_spite(player.last_direction)
 
-func flip_spite(velocity: Vector2) -> void:
-	if velocity.x > 0.0:
+func flip_spite(facing: float) -> void:
+	if facing > 0.0:
 		flip_h = false
-	if velocity.x < 0.0:
+	if facing < 0.0:
 		flip_h = true
 "
 
@@ -69,8 +68,8 @@ health = NodePath("../Health")
 metadata/_custom_type_script = "uid://d0urpb7583m53"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="HurtBox" unique_id=1449747364]
-position = Vector2(0, -24)
-shape = SubResource("CapsuleShape2D_rawpq")
+position = Vector2(0, -22.5)
+shape = SubResource("RectangleShape2D_viyt1")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=580575712 node_paths=PackedStringArray("player")]
 position = Vector2(0, -32)

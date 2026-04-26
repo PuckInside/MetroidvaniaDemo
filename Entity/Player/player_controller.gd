@@ -1,7 +1,7 @@
 extends CharacterBody2D
 class_name PlayerController
 
-const NO_JUMPING_MAP := [PlayerDashState.NAME, ]
+const NO_JUMPING_MAP := [PlayerDashState.NAME, PlayerKnockbackState.NAME]
 
 @export_group("Movement")
 @export var move_speed: float = 160.0
@@ -50,6 +50,7 @@ func _ready() -> void:
 	state_machine.add_state(PlayerWalkState.new(self, move_speed))
 	state_machine.add_state(PlayerJumpState.new(self, jump_height, move_speed))
 	state_machine.add_state(PlayerDashState.new(self, dash_distance))
+	state_machine.add_state(PlayerKnockbackState.new(self))
 
 func _physics_process(delta: float) -> void:
 	_coyote_time_update()
@@ -97,6 +98,14 @@ func get_direction() -> float:
 		return 1.0
 	
 	return 0.0
+
+func force_knockback(force_velocity: Vector2, duration: float) -> void:
+	var knockback = state_machine._states.get(PlayerKnockbackState.NAME)
+	if not knockback is PlayerKnockbackState:
+		return
+	
+	(knockback as PlayerKnockbackState).setup(force_velocity, duration)
+	state_machine.change_state(PlayerKnockbackState.NAME)
 
 func _on_dealth() -> void:
 	print("Dealth!")
