@@ -76,12 +76,6 @@ func _jump_buffering() -> void:
 		jump_buffer.stop()
 		state_machine.change_state(PlayerJumpState.NAME)
 
-func _on_dealth() -> void:
-	print("Dealth!")
-
-func _on_health_changed(current_health: int) -> void:
-	print(current_health)
-
 func get_direction() -> float:
 	var is_left = Input.is_action_pressed("left")
 	var is_right = Input.is_action_pressed("right")
@@ -103,3 +97,9 @@ func get_direction() -> float:
 		return 1.0
 	
 	return 0.0
+
+func _on_dealth() -> void:
+	print("Dealth!")
+
+func _on_health_changed(current_health: int) -> void:
+	print(current_health)
