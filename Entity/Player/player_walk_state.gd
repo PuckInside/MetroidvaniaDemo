@@ -5,7 +5,7 @@ const NAME := "Walk"
 const JUMP_BUFFER := 0.120 #seconds
 
 var _player: PlayerController
-var _move_speed: float = 150.0
+var _move_speed: float = 640.0
 
 static func is_triggered() -> bool:
 	if Input.is_action_pressed("left") or Input.is_action_pressed("right"):

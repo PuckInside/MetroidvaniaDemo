@@ -4,10 +4,10 @@ class_name PlayerController
 const NO_JUMPING_MAP := [PlayerDashState.NAME, PlayerKnockbackState.NAME]
 
 @export_group("Movement")
-@export var move_speed: float = 160.0
-@export var brake_speed: float = 180.0
-@export var jump_height: float = 3 * 16.0
-@export var dash_distance: float = 5 * 16.0
+@export var move_speed: float = 640.0
+@export var brake_speed: float = 720.0
+@export var jump_height: float = 3 * 64.0
+@export var dash_distance: float = 5 * 64.0
 
 @export_group("Dependency")
 @export var health: Health

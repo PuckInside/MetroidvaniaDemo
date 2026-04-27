@@ -23,8 +23,8 @@ resource_name = "Spike"
 script/source = "extends AnimatedSprite2D
 class_name Spike
 
-@export var force_height: float = 1 * 16.0
-@export var force_velocity: float = 300.0
+@export var force_height: float = 1 * 64.0
+@export var force_velocity: float = 1200.0
 @export var disable_duration: float = 0.3
 @export var damage: int = 20
 
@@ -45,17 +45,23 @@ func _on_area_entered(hurtbox: HurtBox) -> void:
 		(hurtbox.owner as PlayerController).force_knockback(velocity, disable_duration)
 "
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_au00k"]
-radius = 5.0
-height = 17.0
-
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_707cn"]
-radius = 4.0
-height = 14.0
+radius = 3.0
+height = 13.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_f4ald"]
+radius = 8.5
 
 [node name="Spike" type="AnimatedSprite2D" unique_id=565945566]
+scale = Vector2(4, 4)
 sprite_frames = SubResource("SpriteFrames_iwv7r")
 script = SubResource("GDScript_f4ald")
+
+[node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=1201109229]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D" unique_id=1919474056]
+position = Vector2(0, 1.5)
+shape = SubResource("CapsuleShape2D_707cn")
 
 [node name="Hitbox" type="Area2D" parent="." unique_id=287194322]
 script = ExtResource("2_f4ald")
@@ -63,11 +69,4 @@ damage = 20
 metadata/_custom_type_script = "uid://ckwnd0fgcmkc8"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox" unique_id=1361402533]
-position = Vector2(0, 1)
-shape = SubResource("CapsuleShape2D_au00k")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=1201109229]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D" unique_id=1919474056]
-position = Vector2(0, 1)
-shape = SubResource("CapsuleShape2D_707cn")
+shape = SubResource("CircleShape2D_f4ald")

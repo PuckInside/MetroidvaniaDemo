@@ -2,7 +2,7 @@ extends IState
 class_name PlayerDashState
 
 const NAME := "Dash"
-const DASH_SPEED := 420.0
+const DASH_SPEED := 1680.0
 const JUMP_BUFFER := 0.520 #seconds
 
 var _player: PlayerController

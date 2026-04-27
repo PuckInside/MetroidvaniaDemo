@@ -2,7 +2,7 @@ extends RefCounted
 class_name Movement
 
 const ZERO := 0.0
-const GRAVITY := 980.0
+const GRAVITY := 980.0 * 4
 
 static func get_gravity(velocity: Vector2, delta: float) -> Vector2:
 	velocity.y += GRAVITY * delta
