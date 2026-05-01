@@ -18,44 +18,17 @@ animations = [{
 "speed": 5.0
 }]
 
-[sub_resource type="GDScript" id="GDScript_f4ald"]
-resource_name = "Spike"
-script/source = "extends AnimatedSprite2D
-class_name Spike
-
-@export var force_height: float = 1 * 64.0
-@export var force_velocity: float = 1200.0
-@export var disable_duration: float = 0.3
-@export var damage: int = 20
-
-func _ready() -> void:
-	$Hitbox.damage = damage
-	$Hitbox.area_entered.connect(_on_area_entered)
-
-func _on_area_entered(hurtbox: HurtBox) -> void:
-	if hurtbox.owner is PlayerController:
-		var player = (hurtbox.owner as PlayerController)
-		
-		var spike_pos = self.global_position 
-		var player_pos = player.global_position
-		var direction = sign(player_pos.x - spike_pos.x)
-		
-		var velocity = Vector2(direction * force_velocity, 0.0)
-		velocity = Movement.get_jump(velocity, force_height)
-		(hurtbox.owner as PlayerController).force_knockback(velocity, disable_duration)
-"
-
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_707cn"]
 radius = 3.0
 height = 13.0
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_f4ald"]
-radius = 8.5
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_f4ald"]
+size = Vector2(14, 16)
 
 [node name="Spike" type="AnimatedSprite2D" unique_id=565945566]
+texture_filter = 1
 scale = Vector2(4, 4)
 sprite_frames = SubResource("SpriteFrames_iwv7r")
-script = SubResource("GDScript_f4ald")
 
 [node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=1201109229]
 
@@ -65,8 +38,12 @@ shape = SubResource("CapsuleShape2D_707cn")
 
 [node name="Hitbox" type="Area2D" parent="." unique_id=287194322]
 script = ExtResource("2_f4ald")
+force_height = 64.0
+force_velocity = 1200.0
+disable_duration = 0.1
 damage = 20
+is_always_active = true
 metadata/_custom_type_script = "uid://ckwnd0fgcmkc8"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox" unique_id=1361402533]
-shape = SubResource("CircleShape2D_f4ald")
+shape = SubResource("RectangleShape2D_f4ald")

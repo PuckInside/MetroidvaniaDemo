@@ -13,7 +13,7 @@ func _init() -> void:
 func _ready() -> void:
 	assert(health is Health)
 
-func take_damage(damage: int) -> void:
+func take_damage(damage: int, _force: Vector2 = Vector2.ZERO, _duration: float = 0.2) -> void:
 	if invincible:
 		health.health_changed.emit(ZERO_DAMAGE)
 		return

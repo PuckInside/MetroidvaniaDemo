@@ -15,7 +15,7 @@ static func get_move(velocity: Vector2, direction: float, speed: float) -> Vecto
 	return velocity
 
 static func get_brake(velocity: Vector2, brake_speed: float) -> Vector2:
-	velocity.x = move_toward(velocity.x, ZERO, brake_speed * 0.15)
+	velocity.x = move_toward(velocity.x, ZERO, brake_speed * 0.2)
 	return velocity
 
 static func get_jump(velocity: Vector2, jump_height: float) -> Vector2:

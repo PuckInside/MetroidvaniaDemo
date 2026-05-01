@@ -39,6 +39,14 @@ func handle_input(_event: InputEvent) -> void:
 	if PlayerDashState.is_triggered():
 		state_machine.change_state(PlayerDashState.NAME)
 		return
+	
+	if PlayerAttackState.is_triggered():
+		state_machine.change_state(PlayerAttackState.NAME)
+		return
+	
+	if PlayerShotState.is_triggered():
+		state_machine.change_state(PlayerShotState.NAME)
+		return
 
 func enter(_previous_state: String) -> void:
 	if _player.on_floor:

@@ -23,7 +23,7 @@ func setup(force_velocity: Vector2, duration: float) -> void:
 
 func physics_update(_delta: float) -> void:
 	if _timer.is_stopped():
-		_player.state_machine.change_state(PlayerIdleState.NAME)
+		_player._state_machine.change_state(PlayerIdleState.NAME)
 	
 	_player.velocity = Movement.get_gravity(_player.velocity, _delta)
 	_player.velocity = Movement.get_brake(_player.velocity, _player.brake_speed)
