@@ -1,0 +1,36 @@
+[gd_scene format=3 uid="uid://bplrspb203ofj"]
+
+[ext_resource type="Texture2D" uid="uid://b12wxhtkeqqt0" path="res://Assets/Cave - Platforms.png" id="1_qwv7y"]
+[ext_resource type="PackedScene" uid="uid://bfknycm3aigab" path="res://Entity/Player/player.tscn" id="2_gc3nt"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kpbna"]
+atlas = ExtResource("1_qwv7y")
+region = Rect2(224, 4, 412, 212)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ofyxu"]
+size = Vector2(366, 171)
+
+[node name="Cave" type="Node2D" unique_id=1114928928]
+
+[node name="rock" type="Sprite2D" parent="." unique_id=1473687760]
+texture = SubResource("AtlasTexture_kpbna")
+
+[node name="StaticBody2D" type="StaticBody2D" parent="rock" unique_id=565703739]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="rock/StaticBody2D" unique_id=1696881039]
+position = Vector2(-3, 5.5)
+shape = SubResource("RectangleShape2D_ofyxu")
+
+[node name="Player" parent="." unique_id=1724247843 instance=ExtResource("2_gc3nt")]
+position = Vector2(-19, -307)
+
+[node name="Camera2D" type="Camera2D" parent="Player" unique_id=906201416]
+offset = Vector2(0, -100)
+process_callback = 0
+position_smoothing_enabled = true
+position_smoothing_speed = 6.0
+drag_horizontal_enabled = true
+drag_vertical_enabled = true
+drag_left_margin = 0.07
+drag_right_margin = 0.07
+drag_bottom_margin = 0.15

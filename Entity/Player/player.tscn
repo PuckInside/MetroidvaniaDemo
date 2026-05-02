@@ -3,16 +3,21 @@
 [ext_resource type="Script" uid="uid://cifgphpjlyct2" path="res://Entity/Player/player_controller.gd" id="1_x1f5c"]
 [ext_resource type="Script" uid="uid://ddofpvinpcyx8" path="res://Entity/Player/player_hurt_box.gd" id="2_rawpq"]
 [ext_resource type="Texture2D" uid="uid://c6mnsbgroyaq" path="res://Entity/Player/Animations/dash.png" id="3_7skvd"]
+[ext_resource type="Texture2D" uid="uid://bir2o32xk822y" path="res://Entity/Player/Animations/attack_1.png" id="3_lj4m2"]
 [ext_resource type="Texture2D" uid="uid://dbwsheygdi2lb" path="res://Entity/Player/Animations/idle_1.png" id="3_lshpy"]
 [ext_resource type="Script" uid="uid://6m8hgpvsvxe0" path="res://Node/health.gd" id="3_qb0yx"]
-[ext_resource type="Texture2D" uid="uid://bv5cqa4ijwpb1" path="res://Entity/Player/Animations/attack.png" id="3_vhflw"]
+[ext_resource type="Texture2D" uid="uid://xhy6jhmj8oh5" path="res://Entity/Player/Animations/attack_2.png" id="4_6pvm4"]
 [ext_resource type="Texture2D" uid="uid://bqp6nnl144jih" path="res://Entity/Player/Animations/idle_2.png" id="4_k7rle"]
 [ext_resource type="Texture2D" uid="uid://4flkch8wnutc" path="res://Entity/Player/Animations/fall.png" id="4_vhflw"]
 [ext_resource type="Texture2D" uid="uid://crrebt6gy2yhc" path="res://Entity/Player/Animations/idle_3.png" id="5_ve7px"]
 [ext_resource type="Texture2D" uid="uid://dwxnago8kl86q" path="res://Entity/Player/Animations/idle_4.png" id="6_7skvd"]
 [ext_resource type="Texture2D" uid="uid://dptykv3fxa4hd" path="res://Entity/Player/Animations/idle_5.png" id="7_vhflw"]
 [ext_resource type="Texture2D" uid="uid://nyhtotv58ql2" path="res://Entity/Player/Animations/rise.png" id="10_eiw37"]
+[ext_resource type="Texture2D" uid="uid://bjwb5hb85vk8q" path="res://Entity/Player/Animations/shoot_2.png" id="12_eb64r"]
 [ext_resource type="Script" uid="uid://ckwnd0fgcmkc8" path="res://Node/hitbox.gd" id="12_eiw37"]
+[ext_resource type="Texture2D" uid="uid://urtfxh40uj7k" path="res://Entity/Player/Animations/shot_1.png" id="13_lj4m2"]
+[ext_resource type="Texture2D" uid="uid://676g5mitt7y4" path="res://Entity/Player/Animations/shot_3.png" id="14_6pvm4"]
+[ext_resource type="Texture2D" uid="uid://c0xaejib87182" path="res://Entity/Player/Animations/shot_4.png" id="15_qndt7"]
 
 [sub_resource type="Curve" id="Curve_x1f5c"]
 _data = [Vector2(0, 0.99245286), 0.0, 0.0, 0, 0, Vector2(0.8854166, 0.84150946), -0.5313206, -0.5313206, 0, 0, Vector2(1, 0.50188684), -1.8547919, 0.0, 0, 0]
@@ -23,23 +28,32 @@ radius = 36.0
 height = 296.0
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_viyt1"]
-size = Vector2(62, 260)
+size = Vector2(78, 260)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_eiw37"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("3_vhflw")
+"texture": ExtResource("3_lj4m2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_6pvm4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_6pvm4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_lj4m2")
 }],
-"loop": true,
+"loop": false,
 "name": &"attack",
-"speed": 5.0
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
 "texture": ExtResource("3_7skvd")
 }],
-"loop": false,
+"loop": true,
 "name": &"dash",
 "speed": 8.0
 }, {
@@ -84,9 +98,32 @@ animations = [{
 "duration": 1.0,
 "texture": ExtResource("10_eiw37")
 }],
-"loop": true,
+"loop": false,
 "name": &"rise",
 "speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("13_lj4m2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("12_eb64r")
+}, {
+"duration": 1.0,
+"texture": ExtResource("14_6pvm4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("15_qndt7")
+}, {
+"duration": 1.0,
+"texture": ExtResource("12_eb64r")
+}, {
+"duration": 1.0,
+"texture": ExtResource("13_lj4m2")
+}],
+"loop": false,
+"name": &"shot",
+"speed": 7.0
 }]
 
 [sub_resource type="GDScript" id="GDScript_x1f5c"]
@@ -99,6 +136,20 @@ func _ready() -> void:
 	assert(player is PlayerController)
 
 func _process(_delta: float) -> void:
+	flip_spite(player.last_direction)
+	
+	if player.get_state() == PlayerDashState.NAME:
+		play(\"dash\")
+		return
+	
+	if player.get_state() == PlayerAttackState.NAME:
+		play(\"attack\")
+		return
+	
+	if player.get_state() == PlayerShotState.NAME:
+		play(\"shot\")
+		return
+	
 	if player.get_state() == PlayerIdleState.NAME:
 		play(\"idle\")
 	
@@ -111,17 +162,6 @@ func _process(_delta: float) -> void:
 	if not player.is_on_floor() and player.velocity.y > 0.0:
 		play(\"fall\")
 	
-	if player.get_state() == PlayerAttackState.NAME:
-		play(\"attack\")
-	
-	if player.get_state() == PlayerShotState.NAME:
-		play(\"attack\")
-	
-	if player.get_state() == PlayerDashState.NAME:
-		play(\"dash\")
-	
-	flip_spite(player.last_direction)
-
 func flip_spite(facing: float) -> void:
 	if facing > 0.0:
 		flip_h = false
@@ -204,6 +244,8 @@ texture_filter = 1
 position = Vector2(0, -147)
 sprite_frames = SubResource("SpriteFrames_eiw37")
 animation = &"attack"
+frame = 3
+frame_progress = 1.0
 script = SubResource("GDScript_x1f5c")
 player = NodePath("..")
 

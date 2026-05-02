@@ -27,7 +27,7 @@ const NO_JUMPING_MAP := [
 
 var _state_machine: StateMachine = StateMachine.new()
 
-var cartridges: int = 5
+var cartridges: int = 99
 var last_direction: float = 1.0
 var double_jump_available: bool = false
 var dash_available: bool = false
@@ -65,8 +65,8 @@ func _ready() -> void:
 	_state_machine.add_state(PlayerJumpState.new(self, jump_height, move_speed))
 	_state_machine.add_state(PlayerDashState.new(self, dash_distance))
 	_state_machine.add_state(PlayerKnockbackState.new(self))
-	_state_machine.add_state(PlayerAttackState.new(self, 0.1, 0.2))
-	_state_machine.add_state(PlayerShotState.new(self, 0.2, 0.1))
+	_state_machine.add_state(PlayerAttackState.new(self, 0.2, 0.2))
+	_state_machine.add_state(PlayerShotState.new(self, 0.3, 0.5))
 
 func _physics_process(delta: float) -> void:
 	_coyote_time_update()

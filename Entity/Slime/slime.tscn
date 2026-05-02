@@ -1,0 +1,183 @@
+[gd_scene format=3 uid="uid://0pyyf1gsbq0v"]
+
+[ext_resource type="Texture2D" uid="uid://dyfqbdw0yd3q4" path="res://Entity/Slime/slime_run.png" id="1_j8x4d"]
+[ext_resource type="Script" uid="uid://6m8hgpvsvxe0" path="res://Node/health.gd" id="1_wjbs2"]
+[ext_resource type="Script" uid="uid://ckwnd0fgcmkc8" path="res://Node/hitbox.gd" id="2_ku2s8"]
+[ext_resource type="Texture2D" uid="uid://ctnjiuxron4xo" path="res://Entity/Slime/slime_death.png" id="2_lvlxf"]
+[ext_resource type="Script" uid="uid://d0urpb7583m53" path="res://Node/hurtbox.gd" id="3_lvlxf"]
+
+[sub_resource type="GDScript" id="GDScript_j8x4d"]
+resource_name = "Slime"
+script/source = "extends CharacterBody2D
+
+var facing: float = 1.0
+var disabled: bool = false
+
+func _ready() -> void:
+	$Hitbox.area_entered.connect(_on_deal_damage)
+	$Health.health_changed.connect(_on_get_damage)
+	$Health.death.connect(_on_death)
+
+func _physics_process(_delta: float) -> void:
+	if velocity.x > 0:
+		$AnimatedSprite2D.flip_h = false
+	if velocity.x < 0:
+		$AnimatedSprite2D.flip_h = true
+	
+	if is_on_wall():
+		facing *= -1.0
+	
+	if not disabled:
+		velocity = Movement.get_move(velocity, facing, 300.0)
+	else:
+		velocity = Movement.get_brake(velocity, 600.0)
+	
+	velocity = Movement.get_gravity(velocity, _delta)
+	move_and_slide()
+
+func _on_deal_damage(_body: Area2D) -> void:
+	facing *= -1.0
+
+func _on_get_damage(_hp: int) -> void:
+	
+	facing *= -1.0
+	disabled = true
+	await get_tree().create_timer(0.2).timeout
+	disabled = false
+
+func _on_death() -> void:
+	set_physics_process(false)
+	$Hitbox.queue_free()
+	$HurtBox.queue_free()
+	$AnimatedSprite2D.play(\"death\")
+	await get_tree().create_timer(1).timeout
+	queue_free()
+"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_f814v"]
+atlas = ExtResource("2_lvlxf")
+region = Rect2(0, 0, 400, 1024)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_u1epd"]
+atlas = ExtResource("2_lvlxf")
+region = Rect2(400, 0, 400, 1024)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_46l1c"]
+atlas = ExtResource("2_lvlxf")
+region = Rect2(800, 0, 400, 1024)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kiy5s"]
+atlas = ExtResource("2_lvlxf")
+region = Rect2(1200, 0, 400, 1024)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7ssnq"]
+atlas = ExtResource("2_lvlxf")
+region = Rect2(1600, 0, 400, 1024)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wjbs2"]
+atlas = ExtResource("1_j8x4d")
+region = Rect2(0, 0, 543, 724)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lvlxf"]
+atlas = ExtResource("1_j8x4d")
+region = Rect2(543, 0, 543, 724)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_oklp0"]
+atlas = ExtResource("1_j8x4d")
+region = Rect2(1086, 0, 543, 724)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_enln8"]
+atlas = ExtResource("1_j8x4d")
+region = Rect2(1629, 0, 543, 724)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_f814v"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_f814v")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_u1epd")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_46l1c")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kiy5s")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7ssnq")
+}],
+"loop": false,
+"name": &"death",
+"speed": 6.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wjbs2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lvlxf")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_oklp0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_enln8")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_j8x4d"]
+radius = 46.0
+height = 110.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wjbs2"]
+size = Vector2(142, 141)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_46l1c"]
+radius = 62.03225
+
+[node name="Slime" type="CharacterBody2D" unique_id=1007851427]
+script = SubResource("GDScript_j8x4d")
+
+[node name="Health" type="Node" parent="." unique_id=132612290]
+script = ExtResource("1_wjbs2")
+max_health = 40
+metadata/_custom_type_script = "uid://6m8hgpvsvxe0"
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=977373332]
+position = Vector2(0.025001466, -42.3)
+scale = Vector2(0.35, 0.35)
+sprite_frames = SubResource("SpriteFrames_f814v")
+animation = &"death"
+autoplay = "idle"
+frame_progress = 1.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1671580719]
+position = Vector2(0, -46)
+rotation = -1.5707964
+shape = SubResource("CapsuleShape2D_j8x4d")
+
+[node name="HurtBox" type="Area2D" parent="." unique_id=431006483 node_paths=PackedStringArray("health")]
+script = ExtResource("3_lvlxf")
+health = NodePath("../Health")
+metadata/_custom_type_script = "uid://d0urpb7583m53"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HurtBox" unique_id=1722176254]
+position = Vector2(0, -60.5)
+shape = SubResource("RectangleShape2D_wjbs2")
+
+[node name="Hitbox" type="Area2D" parent="." unique_id=900385150]
+script = ExtResource("2_ku2s8")
+force_height = 32.0
+force_velocity = 1200.0
+damage = 10
+is_always_active = true
+metadata/_custom_type_script = "uid://ckwnd0fgcmkc8"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox" unique_id=1494294309]
+position = Vector2(0, -52)
+shape = SubResource("CircleShape2D_46l1c")
