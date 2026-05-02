@@ -6,6 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://b12wxhtkeqqt0" path="res://Assets/Cave - Platforms.png" id="3_0fcji"]
 [ext_resource type="PackedScene" uid="uid://ddg5li18hlxo6" path="res://Entity/Spike/spike.tscn" id="3_707cn"]
 [ext_resource type="Script" uid="uid://6m8hgpvsvxe0" path="res://Node/health.gd" id="5_iwv7r"]
+[ext_resource type="PackedScene" uid="uid://s4v4yn5ie6xo" path="res://Entity/Stalactite/stalactite.tscn" id="7_p7j4p"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_dqfvb"]
 texture = ExtResource("1_p7j4p")
@@ -986,6 +987,9 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="SpriteFrames" id="SpriteFrames_dftws"]
+animations = []
+
 [node name="World" type="Node2D" unique_id=1603821883]
 
 [node name="TileMapLayer" type="TileMapLayer" parent="." unique_id=1020040591]
@@ -1034,3 +1038,13 @@ position = Vector2(-672, -32)
 
 [node name="Spike3" parent="." unique_id=984218769 instance=ExtResource("3_707cn")]
 position = Vector2(-608, -32)
+
+[node name="Stalactite" parent="." unique_id=1221269544 instance=ExtResource("7_p7j4p")]
+position = Vector2(366, -3)
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=890350701]
+texture_filter = 6
+position = Vector2(117, -161)
+scale = Vector2(10, 10)
+sprite_frames = SubResource("SpriteFrames_dftws")
+animation = &""

@@ -1,0 +1,29 @@
+[gd_scene format=3 uid="uid://cmu0ivwvscj75"]
+
+[ext_resource type="Texture2D" uid="uid://c7crln3bwte3y" path="res://Assets/Cave - SmallRocks.png" id="1_dxv2u"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ydpj1"]
+atlas = ExtResource("1_dxv2u")
+region = Rect2(804.59644, 859.0547, 190.06494, 230.07861)
+
+[node name="RockParticles" type="CPUParticles2D" unique_id=1311772473]
+emitting = false
+amount = 12
+texture = SubResource("AtlasTexture_ydpj1")
+lifetime = 0.3
+one_shot = true
+speed_scale = 0.6
+emission_shape = 1
+emission_sphere_radius = 128.0
+initial_velocity_min = 51.01
+initial_velocity_max = 200.0
+angular_velocity_min = -100.0
+angular_velocity_max = 100.0
+linear_accel_min = 15.0
+linear_accel_max = 20.0
+radial_accel_min = 5.8
+radial_accel_max = 15.94
+angle_min = 10.4
+angle_max = 146.1
+scale_amount_min = 0.08
+scale_amount_max = 0.18

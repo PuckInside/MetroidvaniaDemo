@@ -1,0 +1,97 @@
+[gd_scene format=3 uid="uid://s4v4yn5ie6xo"]
+
+[ext_resource type="Texture2D" uid="uid://c7crln3bwte3y" path="res://Assets/Cave - SmallRocks.png" id="1_ydpj1"]
+[ext_resource type="Script" uid="uid://d0urpb7583m53" path="res://Node/hurtbox.gd" id="2_ximai"]
+[ext_resource type="Script" uid="uid://6m8hgpvsvxe0" path="res://Node/health.gd" id="3_jsim7"]
+[ext_resource type="PackedScene" uid="uid://cmu0ivwvscj75" path="res://Entity/Stalactite/rock_particles.tscn" id="4_ximai"]
+
+[sub_resource type="GDScript" id="GDScript_x5o4p"]
+resource_name = "Stalactite"
+script/source = "extends Hitbox
+
+@onready var health := $Health
+
+func _ready() -> void:
+	super._ready()
+	health.death.connect(_on_death)
+	health.health_changed.connect(_on_damage)
+
+func _on_death() -> void:
+	$AnimatedSprite2D.queue_free()
+	$CollisionShape2D.queue_free()
+	$StaticBody2D.queue_free()
+	$HurtBox.queue_free()
+	
+	await get_tree().create_timer(0.5).timeout
+	queue_free()
+
+func _on_damage(_hp: float) -> void:
+	$RockParticles.emitting = true
+"
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_1s6lp"]
+size = Vector2(196, 600)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1pouw"]
+atlas = ExtResource("1_ydpj1")
+region = Rect2(1589, 1414, 227, 600)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_dkxw8"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1pouw")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_6s841"]
+size = Vector2(44, 585)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ydpj1"]
+size = Vector2(240, 604)
+
+[node name="Stalactite" type="Area2D" unique_id=1221269544]
+scale = Vector2(0.5, 0.5)
+script = SubResource("GDScript_x5o4p")
+force_height = 42.0
+force_velocity = 1200.0
+disable_duration = 0.1
+damage = 15
+is_always_active = true
+metadata/_custom_type_script = "uid://ckwnd0fgcmkc8"
+
+[node name="Health" type="Node" parent="." unique_id=1198581519]
+script = ExtResource("3_jsim7")
+max_health = 60
+metadata/_custom_type_script = "uid://6m8hgpvsvxe0"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=131003732]
+position = Vector2(0, -294)
+shape = SubResource("RectangleShape2D_1s6lp")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1889926249]
+self_modulate = Color(0.6723874, 0.24831021, 0.28582588, 1)
+position = Vector2(0, -296)
+sprite_frames = SubResource("SpriteFrames_dkxw8")
+
+[node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=1822504813]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D" unique_id=1979879674]
+position = Vector2(0, -282.5)
+shape = SubResource("RectangleShape2D_6s841")
+
+[node name="HurtBox" type="Area2D" parent="." unique_id=899160791 node_paths=PackedStringArray("health")]
+script = ExtResource("2_ximai")
+health = NodePath("../Health")
+metadata/_custom_type_script = "uid://d0urpb7583m53"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HurtBox" unique_id=902085104]
+position = Vector2(0, -292)
+shape = SubResource("RectangleShape2D_ydpj1")
+
+[node name="RockParticles" parent="." unique_id=1311772473 instance=ExtResource("4_ximai")]
+position = Vector2(0, -290)
+lifetime = 0.12

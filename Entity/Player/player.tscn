@@ -23,7 +23,7 @@ radius = 36.0
 height = 296.0
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_viyt1"]
-size = Vector2(50, 260)
+size = Vector2(62, 260)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_eiw37"]
 animations = [{
@@ -140,10 +140,15 @@ script/source = "extends Hitbox
 @export var accuracy: Curve
 
 var _random = RandomNumberGenerator.new()
+var chance = 1.0
 
 func _ready() -> void:
 	super._ready()
 	assert(accuracy is Curve)
+
+func deal_damage(lifetime: float) -> void:
+	super.deal_damage(lifetime)
+	chance = _random.randf_range(0.1, 1.0)
 
 func _on_area_entered(hurtbox: HurtBox) -> void:
 	if not hurtbox is HurtBox:
@@ -155,7 +160,6 @@ func _on_area_entered(hurtbox: HurtBox) -> void:
 	var target_pos = hurtbox.global_position
 	var direction = sign(target_pos.x - self_pos.x)
 	var distance = abs(target_pos.x - self_pos.x)
-	var chance = _random.randf_range(0.1, 1.0)
 	
 	if chance <= accuracy.sample(distance / miss_range):
 		var velocity = Vector2(direction * force_velocity, 0.0)

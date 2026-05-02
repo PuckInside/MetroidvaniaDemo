@@ -23,7 +23,7 @@ func deal_damage(lifetime: float) -> void:
 func _on_area_entered(hurtbox: HurtBox) -> void:
 	if not hurtbox is HurtBox:
 		return
-	if hurtbox.owner == self.owner:
+	if hurtbox.owner == self.owner or hurtbox.owner == self:
 		return
 	
 	var self_pos = self.global_position 
