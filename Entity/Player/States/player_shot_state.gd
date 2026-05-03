@@ -36,13 +36,11 @@ func enter(_previous_state: String) -> void:
 		return
 	
 	await _player.get_tree().create_timer(_prepare).timeout
+	_player.cartridges -= 1
 	
 	_player.range_hitbox.position.x = _player.last_direction * POSITION
 	_player.range_hitbox.deal_damage(_duration)
 	await _player.get_tree().create_timer(_duration).timeout
 	
 	_player.shot_cooldown.start()
-	_player.cartridges -= 1
-	print(_player.cartridges)
-	#_player.velocity = Movement.get_move(_player.velocity, _player.last_direction, MOVE)
 	state_machine.change_state(PlayerIdleState.NAME)

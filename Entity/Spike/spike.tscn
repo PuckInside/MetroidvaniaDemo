@@ -41,7 +41,7 @@ script = ExtResource("2_f4ald")
 force_height = 64.0
 force_velocity = 1200.0
 disable_duration = 0.1
-damage = 20
+damage = 9999
 is_always_active = true
 metadata/_custom_type_script = "uid://ckwnd0fgcmkc8"
 

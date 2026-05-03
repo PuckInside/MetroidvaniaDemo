@@ -11,6 +11,7 @@ const NO_JUMPING_MAP := [
 @export_group("Movement")
 @export var move_speed: float = 640.0
 @export var brake_speed: float = 720.0
+@export var double_jump: bool = false
 @export var jump_height: float = 3 * 64.0
 @export var dash_distance: float = 5 * 64.0
 
@@ -27,7 +28,7 @@ const NO_JUMPING_MAP := [
 
 var _state_machine: StateMachine = StateMachine.new()
 
-var cartridges: int = 99
+var cartridges: int = 5
 var last_direction: float = 1.0
 var double_jump_available: bool = false
 var dash_available: bool = false
@@ -40,7 +41,7 @@ var on_floor: bool = false:
 		else:
 			coyote_timer.start()
 			on_floor = true
-			double_jump_available = true
+			double_jump_available = double_jump
 			dash_available = true
 
 func _ready() -> void:
