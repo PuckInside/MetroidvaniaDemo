@@ -54,6 +54,16 @@ func _on_death() -> void:
 	queue_free()
 "
 
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_j8x4d"]
+radius = 46.0
+height = 110.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wjbs2"]
+size = Vector2(142, 141)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_46l1c"]
+radius = 62.03225
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_f814v"]
 atlas = ExtResource("2_lvlxf")
 region = Rect2(0, 0, 400, 1024)
@@ -130,16 +140,6 @@ animations = [{
 "speed": 5.0
 }]
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_j8x4d"]
-radius = 46.0
-height = 110.0
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_wjbs2"]
-size = Vector2(142, 141)
-
-[sub_resource type="CircleShape2D" id="CircleShape2D_46l1c"]
-radius = 62.03225
-
 [node name="Slime" type="CharacterBody2D" unique_id=1007851427]
 script = SubResource("GDScript_j8x4d")
 
@@ -147,14 +147,6 @@ script = SubResource("GDScript_j8x4d")
 script = ExtResource("1_wjbs2")
 max_health = 40
 metadata/_custom_type_script = "uid://6m8hgpvsvxe0"
-
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=977373332]
-position = Vector2(0.025001466, -42.3)
-scale = Vector2(0.35, 0.35)
-sprite_frames = SubResource("SpriteFrames_f814v")
-animation = &"death"
-autoplay = "idle"
-frame_progress = 1.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1671580719]
 position = Vector2(0, -46)
@@ -181,3 +173,11 @@ metadata/_custom_type_script = "uid://ckwnd0fgcmkc8"
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox" unique_id=1494294309]
 position = Vector2(0, -52)
 shape = SubResource("CircleShape2D_46l1c")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=977373332]
+position = Vector2(0.025001466, -42.3)
+scale = Vector2(0.35, 0.35)
+sprite_frames = SubResource("SpriteFrames_f814v")
+animation = &"death"
+autoplay = "idle"
+frame_progress = 1.0

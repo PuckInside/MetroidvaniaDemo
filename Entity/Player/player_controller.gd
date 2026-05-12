@@ -14,17 +14,16 @@ const NO_JUMPING_MAP := [
 @export var double_jump: bool = false
 @export var jump_height: float = 3 * 64.0
 @export var dash_distance: float = 5 * 64.0
-
-@export_group("Dependency")
-@export var health: Health
-@export var melee_hitbox: Hitbox
-@export var range_hitbox: Hitbox
-@export var coyote_timer: Timer
-@export var jump_buffer: Timer
 @export var dash_curve: Curve
-@export var dash_cooldown: Timer
-@export var attack_cooldown: Timer
-@export var shot_cooldown: Timer
+
+@export var health: Health
+@onready var melee_hitbox: Hitbox = $meleeHitbox
+@onready var range_hitbox: Hitbox = $rangeHitbox
+@onready var coyote_timer: Timer = $CoyoteTime
+@onready var jump_buffer: Timer = $JumpBuffer
+@onready var dash_cooldown: Timer = $DashCooldown
+@onready var attack_cooldown: Timer = $AttackCooldown
+@onready var shot_cooldown: Timer = $ShotCooldown
 
 var _state_machine: StateMachine = StateMachine.new()
 
@@ -45,18 +44,8 @@ var on_floor: bool = false:
 			dash_available = true
 
 func _ready() -> void:
-	assert(health is Health)
-	assert(melee_hitbox is Hitbox)
-	assert(range_hitbox is Hitbox)
-	assert(coyote_timer is Timer)
-	assert(jump_buffer is Timer)
 	assert(dash_curve is Curve)
-	assert(dash_cooldown is Timer)
-	assert(attack_cooldown is Timer)
-	assert(shot_cooldown is Timer)
-	
-	health.health_changed.connect(_on_health_changed)
-	health.death.connect(_on_dealth)
+	assert(health is Health)
 	
 	var init_state := PlayerIdleState.new(self, brake_speed)
 	_state_machine.add_state(init_state)
@@ -126,9 +115,3 @@ func force_knockback(force_velocity: Vector2, duration: float) -> void:
 
 func get_state() -> String:
 	return _state_machine.get_state_name()
-
-func _on_dealth() -> void:
-	print("Dealth!")
-
-func _on_health_changed(current_health: int) -> void:
-	print(current_health)

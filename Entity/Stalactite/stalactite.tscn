@@ -37,6 +37,12 @@ func _on_area_entered(hurtbox: HurtBox) -> void:
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_1s6lp"]
 size = Vector2(196, 600)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_6s841"]
+size = Vector2(44, 585)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ydpj1"]
+size = Vector2(240, 604)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_1pouw"]
 atlas = ExtResource("1_ydpj1")
 region = Rect2(1589, 1414, 227, 600)
@@ -51,12 +57,6 @@ animations = [{
 "name": &"default",
 "speed": 5.0
 }]
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_6s841"]
-size = Vector2(44, 585)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_ydpj1"]
-size = Vector2(240, 604)
 
 [node name="Stalactite" type="Area2D" unique_id=1221269544]
 scale = Vector2(0.5, 0.5)
@@ -77,11 +77,6 @@ metadata/_custom_type_script = "uid://6m8hgpvsvxe0"
 position = Vector2(0, -294)
 shape = SubResource("RectangleShape2D_1s6lp")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1889926249]
-self_modulate = Color(0.6723874, 0.24831021, 0.28582588, 1)
-position = Vector2(0, -296)
-sprite_frames = SubResource("SpriteFrames_dkxw8")
-
 [node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=1822504813]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D" unique_id=1979879674]
@@ -100,3 +95,8 @@ shape = SubResource("RectangleShape2D_ydpj1")
 [node name="RockParticles" parent="." unique_id=1311772473 instance=ExtResource("4_ximai")]
 position = Vector2(0, -290)
 lifetime = 0.12
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1889926249]
+self_modulate = Color(0.6723874, 0.24831021, 0.28582588, 1)
+position = Vector2(0, -296)
+sprite_frames = SubResource("SpriteFrames_dkxw8")

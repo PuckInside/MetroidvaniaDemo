@@ -19,8 +19,8 @@
 [ext_resource type="Texture2D" uid="uid://676g5mitt7y4" path="res://Entity/Player/Animations/shot_3.png" id="14_6pvm4"]
 [ext_resource type="Texture2D" uid="uid://c0xaejib87182" path="res://Entity/Player/Animations/shot_4.png" id="15_qndt7"]
 
-[sub_resource type="Curve" id="Curve_x1f5c"]
-_data = [Vector2(0, 0.99245286), 0.0, 0.0, 0, 0, Vector2(0.8854166, 0.84150946), -0.5313206, -0.5313206, 0, 0, Vector2(1, 0.50188684), -1.8547919, 0.0, 0, 0]
+[sub_resource type="Curve" id="Curve_lj4m2"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.91208786, 0.82682586), -0.9438142, -0.9438142, 0, 0, Vector2(0.99267393, 0.5043638), -1.8154777, 0.0, 0, 0]
 point_count = 3
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_x1f5c"]
@@ -214,17 +214,10 @@ point_count = 4
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_eiw37"]
 size = Vector2(20, 1200)
 
-[node name="Player" type="CharacterBody2D" unique_id=1724247843 node_paths=PackedStringArray("health", "melee_hitbox", "range_hitbox", "coyote_timer", "jump_buffer", "dash_cooldown", "attack_cooldown", "shot_cooldown")]
+[node name="Player" type="CharacterBody2D" unique_id=1724247843 node_paths=PackedStringArray("health")]
 script = ExtResource("1_x1f5c")
+dash_curve = SubResource("Curve_lj4m2")
 health = NodePath("Health")
-melee_hitbox = NodePath("meleeHitbox")
-range_hitbox = NodePath("rangeHitbox")
-coyote_timer = NodePath("CoyoteTime")
-jump_buffer = NodePath("JumpBuffer")
-dash_curve = SubResource("Curve_x1f5c")
-dash_cooldown = NodePath("DashCooldown")
-attack_cooldown = NodePath("AttackCooldown")
-shot_cooldown = NodePath("ShotCooldown")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1791181917]
 position = Vector2(0, -148)
