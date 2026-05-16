@@ -55,7 +55,7 @@ func _ready() -> void:
 	_state_machine.add_state(PlayerJumpState.new(self, jump_height, move_speed))
 	_state_machine.add_state(PlayerDashState.new(self, dash_distance))
 	_state_machine.add_state(PlayerKnockbackState.new(self))
-	_state_machine.add_state(PlayerAttackState.new(self, 0.2, 0.2))
+	_state_machine.add_state(PlayerAttackState.new(self, 0.1, 0.2))
 	_state_machine.add_state(PlayerShotState.new(self, 0.3, 0.5))
 
 func _physics_process(delta: float) -> void:

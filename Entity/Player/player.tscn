@@ -16,7 +16,10 @@
 [ext_resource type="Texture2D" uid="uid://bjwb5hb85vk8q" path="res://Entity/Player/Animations/shoot_2.png" id="12_eb64r"]
 [ext_resource type="Script" uid="uid://ckwnd0fgcmkc8" path="res://Node/hitbox.gd" id="12_eiw37"]
 [ext_resource type="Texture2D" uid="uid://urtfxh40uj7k" path="res://Entity/Player/Animations/shot_1.png" id="13_lj4m2"]
+[ext_resource type="Texture2D" uid="uid://ddd5sqmowvk62" path="res://Entity/Player/Animations/run_3.png" id="13_qndt7"]
 [ext_resource type="Texture2D" uid="uid://676g5mitt7y4" path="res://Entity/Player/Animations/shot_3.png" id="14_6pvm4"]
+[ext_resource type="Texture2D" uid="uid://bws4ldsmm7gi3" path="res://Entity/Player/Animations/run_2.png" id="14_hkdd6"]
+[ext_resource type="Texture2D" uid="uid://cccefnackvk8l" path="res://Entity/Player/Animations/run_1.png" id="15_hkdd6"]
 [ext_resource type="Texture2D" uid="uid://c0xaejib87182" path="res://Entity/Player/Animations/shot_4.png" id="15_qndt7"]
 
 [sub_resource type="Curve" id="Curve_lj4m2"]
@@ -104,6 +107,20 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
+"texture": ExtResource("13_qndt7")
+}, {
+"duration": 1.0,
+"texture": ExtResource("14_hkdd6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("15_hkdd6")
+}],
+"loop": true,
+"name": &"run",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": ExtResource("13_lj4m2")
 }, {
 "duration": 1.0,
@@ -154,7 +171,7 @@ func _process(_delta: float) -> void:
 		play(\"idle\")
 	
 	if player.get_state() == PlayerWalkState.NAME:
-		play(\"idle\")
+		play(\"run\")
 	
 	if not player.is_on_floor() and player.velocity.y <= 0.0:
 		play(\"rise\")
@@ -177,6 +194,7 @@ resource_name = "ShotHitbox"
 script/source = "extends Hitbox
 
 @export var miss_range: float = 900.0
+@export var hit_range: float = 300.0
 @export var accuracy: Curve
 
 var _random = RandomNumberGenerator.new()
@@ -201,7 +219,7 @@ func _on_area_entered(hurtbox: HurtBox) -> void:
 	var direction = sign(target_pos.x - self_pos.x)
 	var distance = abs(target_pos.x - self_pos.x)
 	
-	if chance <= accuracy.sample(distance / miss_range):
+	if distance >= 300.0 or chance <= accuracy.sample(distance / miss_range):
 		var velocity = Vector2(direction * force_velocity, 0.0)
 		velocity = Movement.get_jump(velocity, force_height)
 		hurtbox.take_damage(damage, velocity, disable_duration)
@@ -236,17 +254,16 @@ shape = SubResource("RectangleShape2D_viyt1")
 texture_filter = 1
 position = Vector2(0, -147)
 sprite_frames = SubResource("SpriteFrames_eiw37")
-animation = &"attack"
-frame = 3
-frame_progress = 1.0
+animation = &"run"
+frame_progress = 0.80952555
 script = SubResource("GDScript_x1f5c")
 player = NodePath("..")
 
 [node name="meleeHitbox" type="Area2D" parent="." unique_id=366471997]
 position = Vector2(75, -140)
 script = ExtResource("12_eiw37")
-force_height = 12.0
-force_velocity = 100.0
+force_height = 24.0
+force_velocity = 160.0
 disable_duration = 0.1
 damage = 20
 metadata/_custom_type_script = "uid://ckwnd0fgcmkc8"

@@ -10,12 +10,72 @@
 resource_name = "Slime"
 script/source = "extends CharacterBody2D
 
+class SlimeWalk extends IState:
+	const NAME := \"Walk\"
+	var _move_speed: float = 640.0
+	var _body: CharacterBody2D
+	
+	func _init(body: CharacterBody2D, move_speed: float) -> void:
+		assert(body is CharacterBody2D, \"Ссылка на игрока не должна быть пустым\")
+		
+		name = NAME
+		_body = body
+		_move_speed = move_speed
+	
+	func physics_update(_delta: float) -> void:
+		if not _body.is_on_floor():
+			_body.velocity = Movement.get_gravity(_body.velocity, _delta)
+	
+		_body.velocity = Movement.get_move(_body.velocity, _body.facing, _move_speed)
+
+class SlimeKnockback extends IState:
+	const NAME := \"Knockback\"
+	var _timer: ManualTimer
+	var _force_velocity: Vector2
+	var _duration: float
+	var _body: CharacterBody2D
+	var _hitbox: Hitbox
+	
+	func _init(body: CharacterBody2D, hitbox: Hitbox) -> void:
+		assert(body is CharacterBody2D, \"Ссылка на игрока не должна быть пустым\")
+		
+		name = NAME
+		_body = body
+		_hitbox = hitbox
+		_timer = ManualTimer.new()
+		_force_velocity = Vector2.ZERO
+		_duration = 0.0
+	
+	func setup(force_velocity: Vector2, duration: float) -> void:
+		_force_velocity = force_velocity
+		_duration = duration
+	
+	func physics_update(_delta: float) -> void:
+		if _timer.is_stopped():
+			_hitbox.monitoring = true
+			_body._state_machine.change_state(SlimeWalk.NAME)
+		else:
+			_hitbox.monitoring = false
+		
+		_body.velocity = Movement.get_gravity(_body.velocity, _delta)
+		_body.velocity = Movement.get_brake(_body.velocity, 640.0)
+		_timer.update_timer(_delta)
+
+	func enter(_previous_state: String) -> void:
+		_body.velocity = _force_velocity
+		_timer.start(_duration)
+
 var facing: float = 1.0
-var disabled: bool = false
+var _state_machine: StateMachine = StateMachine.new()
 
 func _ready() -> void:
+	var init_state := SlimeWalk.new(self, 320.0)
+	_state_machine.add_state(init_state)
+	_state_machine.set_init_state(init_state.name)
+	_state_machine.add_state(SlimeKnockback.new(self, $Hitbox))
+	
 	$Hitbox.area_entered.connect(_on_deal_damage)
-	$Health.health_changed.connect(_on_get_damage)
+	$HurtBox.on_take_damage.connect(_on_take_damage)
 	$Health.death.connect(_on_death)
 
 func _physics_process(_delta: float) -> void:
@@ -27,23 +87,19 @@ func _physics_process(_delta: float) -> void:
 	if is_on_wall():
 		facing *= -1.0
 	
-	if not disabled:
-		velocity = Movement.get_move(velocity, facing, 300.0)
-	else:
-		velocity = Movement.get_brake(velocity, 600.0)
-	
-	velocity = Movement.get_gravity(velocity, _delta)
+	_state_machine.physics_update(_delta)
 	move_and_slide()
 
 func _on_deal_damage(_body: Area2D) -> void:
 	facing *= -1.0
 
-func _on_get_damage(_hp: int) -> void:
+func _on_take_damage(_damage: int, _force: Vector2, _duration: float) -> void:
+	var knockback = _state_machine._states.get(SlimeKnockback.NAME)
+	if not knockback is SlimeKnockback:
+		return
 	
-	facing *= -1.0
-	disabled = true
-	await get_tree().create_timer(0.2).timeout
-	disabled = false
+	(knockback as SlimeKnockback).setup(_force, _duration)
+	_state_machine.change_state(SlimeKnockback.NAME)
 
 func _on_death() -> void:
 	set_physics_process(false)
