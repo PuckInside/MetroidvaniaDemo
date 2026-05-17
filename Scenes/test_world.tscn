@@ -7,7 +7,8 @@
 [ext_resource type="Script" uid="uid://6m8hgpvsvxe0" path="res://Node/health.gd" id="5_iwv7r"]
 [ext_resource type="PackedScene" uid="uid://s4v4yn5ie6xo" path="res://Entity/Stalactite/stalactite.tscn" id="7_p7j4p"]
 [ext_resource type="PackedScene" uid="uid://0pyyf1gsbq0v" path="res://Entity/Slime/slime.tscn" id="8_0fcji"]
-[ext_resource type="Texture2D" uid="uid://dyfqbdw0yd3q4" path="res://Entity/Slime/slime_run.png" id="8_dqfvb"]
+[ext_resource type="PackedScene" uid="uid://bfknycm3aigab" path="res://Entity/Player/player.tscn" id="8_dqfvb"]
+[ext_resource type="PackedScene" uid="uid://4egv10rvcmf8" path="res://Entity/Kust/kust.tscn" id="9_dqfvb"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_dqfvb"]
 texture = ExtResource("1_p7j4p")
@@ -988,10 +989,6 @@ animations = [{
 "speed": 5.0
 }]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_yrarp"]
-atlas = ExtResource("8_dqfvb")
-region = Rect2(34.588165, 64.01355, 495.88364, 515.8905)
-
 [node name="World" type="Node2D" unique_id=1603821883]
 
 [node name="TileMapLayer" type="TileMapLayer" parent="." unique_id=1020040591]
@@ -1032,10 +1029,14 @@ position = Vector2(366, -3)
 [node name="Slime" parent="." unique_id=1007851427 instance=ExtResource("8_0fcji")]
 position = Vector2(1587, -76)
 
-[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1439257547]
-position = Vector2(-93, -65.00001)
-scale = Vector2(0.4, 0.4)
-texture = SubResource("AtlasTexture_yrarp")
+[node name="Player" parent="." unique_id=1724247843 instance=ExtResource("8_dqfvb")]
+position = Vector2(-150, -37)
 
-[node name="Camera2D" type="Camera2D" parent="Sprite2D" unique_id=839231885]
+[node name="Camera2D" type="Camera2D" parent="Player" unique_id=388927213]
 offset = Vector2(0, -150)
+process_callback = 0
+position_smoothing_enabled = true
+position_smoothing_speed = 6.0
+
+[node name="Kust" parent="." unique_id=1826992119 instance=ExtResource("9_dqfvb")]
+position = Vector2(128, 0)

@@ -9,9 +9,10 @@ const NO_JUMPING_MAP := [
 ]
 
 @export_group("Movement")
+@export var has_double_jump: bool = false
+@export var has_air_dash: bool = false
 @export var move_speed: float = 640.0
 @export var brake_speed: float = 720.0
-@export var double_jump: bool = false
 @export var jump_height: float = 3 * 64.0
 @export var dash_distance: float = 5 * 64.0
 @export var dash_curve: Curve
@@ -37,10 +38,14 @@ var on_floor: bool = false:
 		if value == false:
 			coyote_timer.stop()
 			on_floor = false
+			if dash_available and has_air_dash:
+				dash_available = true
+			else:
+				dash_available = false
 		else:
 			coyote_timer.start()
 			on_floor = true
-			double_jump_available = double_jump
+			double_jump_available = has_double_jump
 			dash_available = true
 
 func _ready() -> void:

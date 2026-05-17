@@ -1,0 +1,197 @@
+[gd_scene format=3 uid="uid://4egv10rvcmf8"]
+
+[ext_resource type="Texture2D" uid="uid://dd6pch0kgdu36" path="res://Entity/Kust/kust_bite_1.png" id="1_h76qk"]
+[ext_resource type="Texture2D" uid="uid://bfuyvjeqv0dur" path="res://Entity/Kust/kust_bite_2.png" id="2_4bm4m"]
+[ext_resource type="Texture2D" uid="uid://b0yygm3m06sk7" path="res://Entity/Kust/kust_bite_3.png" id="3_hq0ll"]
+[ext_resource type="Texture2D" uid="uid://cad46ibvp1iq2" path="res://Entity/Kust/kust_idle.png" id="4_strwj"]
+[ext_resource type="Script" uid="uid://6m8hgpvsvxe0" path="res://Node/health.gd" id="5_strwj"]
+[ext_resource type="Script" uid="uid://d0urpb7583m53" path="res://Node/hurtbox.gd" id="6_q6cx6"]
+[ext_resource type="Script" uid="uid://ckwnd0fgcmkc8" path="res://Node/hitbox.gd" id="7_atfey"]
+[ext_resource type="Texture2D" uid="uid://cpjkwac4r2j3v" path="res://Entity/Kust/kust_die_1.png" id="7_ea06a"]
+[ext_resource type="Texture2D" uid="uid://1mvugp4sg4" path="res://Entity/Kust/kust_die_2.png" id="8_wmk1v"]
+[ext_resource type="Texture2D" uid="uid://batxght5c2otw" path="res://Entity/Kust/kust_die_3.png" id="9_4ry20"]
+
+[sub_resource type="GDScript" id="GDScript_q6cx6"]
+resource_name = "kust"
+script/source = "extends CharacterBody2D
+
+class KustWait extends IState:
+	const NAME := \"Wait\"
+	var _body: CharacterBody2D
+	
+	func _init(body: CharacterBody2D) -> void:
+		name = NAME
+		_body = body
+
+class KustBite extends IState:
+	const NAME := \"Bite\"
+	var _body: CharacterBody2D
+	var _prepare: float
+	var _duration: float
+	var _hitbox: Hitbox
+	
+	func _init(body: CharacterBody2D, hitbox: Hitbox, prepare: float, duration: float) -> void:
+		assert(body is CharacterBody2D, \"Ссылка на игрока не должна быть пустым\")
+		assert(hitbox is Hitbox, \"Ссылка на игрока не должна быть пустым\")
+		
+		name = NAME
+		_body = body
+		_hitbox = hitbox
+		_prepare = prepare
+		_duration = duration
+	
+	func enter(_previous_state: String) -> void:
+		await _body.get_tree().create_timer(_prepare).timeout
+		_hitbox.deal_damage(_duration)
+		await _body.get_tree().create_timer(_duration).timeout
+		_body._state_machine.change_state(KustWait.NAME)
+
+class KustDisabled extends IState:
+	const NAME := \"Disabled\"
+	var _body: CharacterBody2D
+	var _duration: float
+	
+	func _init(body: CharacterBody2D, duration: float) -> void:
+		name = NAME
+		_body = body
+		_duration = duration
+	
+	func enter(_previous_state: String) -> void:
+		await _body.get_tree().create_timer(_duration).timeout
+		_body._state_machine.change_state(KustWait.NAME)
+
+var _state_machine: StateMachine = StateMachine.new()
+
+func _ready() -> void:
+	var init_state := KustWait.new(self)
+	_state_machine.add_state(init_state)
+	_state_machine.set_init_state(init_state.name)
+	_state_machine.add_state(KustDisabled.new(self, 1.0))
+	_state_machine.add_state(KustBite.new(self, $Hitbox, 0.125, 0.36))
+	
+	$HurtBox.on_take_damage.connect(_on_take_damage)
+	$Health.death.connect(_on_death)
+
+func _on_take_damage(_damage: int, _force: Vector2, _duration: float) -> void:
+	if _state_machine.get_state_name() == KustWait.NAME:
+		_state_machine.change_state(KustDisabled.NAME)
+
+func _on_death() -> void:
+	set_physics_process(false)
+	$Hitbox.queue_free()
+	$HurtBox.queue_free()
+	$CollisionShape2D.queue_free()
+	$AnimatedSprite2D.play(\"death\")
+	_state_machine.change_state(KustDisabled.NAME)
+	await get_tree().create_timer(1).timeout
+	queue_free()
+
+func _on_area_2d_body_entered(body: Node) -> void:
+	if not body is PlayerController:
+		return
+	
+	if _state_machine.get_state_name() != KustDisabled.NAME:
+		await get_tree().create_timer(0.3).timeout
+		_state_machine.change_state(KustBite.NAME)
+		$AnimatedSprite2D.play(\"bite\")
+		await get_tree().create_timer(0.72).timeout
+		$AnimatedSprite2D.play(\"idle\")
+"
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_atfey"]
+size = Vector2(318.5, 27)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_4ry20"]
+size = Vector2(338, 254)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ea06a"]
+size = Vector2(337, 101)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wmk1v"]
+size = Vector2(318, 241)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_ea06a"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_h76qk")
+}, {
+"duration": 1.0,
+"texture": ExtResource("2_4bm4m")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_hq0ll")
+}],
+"loop": false,
+"name": &"bite",
+"speed": 6.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("7_ea06a")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_wmk1v")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_4ry20")
+}],
+"loop": false,
+"name": &"death",
+"speed": 4.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("4_strwj")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}]
+
+[node name="Kust" type="CharacterBody2D" unique_id=1826992119]
+script = SubResource("GDScript_q6cx6")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1710953498]
+position = Vector2(0, 13.5)
+shape = SubResource("RectangleShape2D_atfey")
+
+[node name="Health" type="Node" parent="." unique_id=1132105609]
+script = ExtResource("5_strwj")
+max_health = 60
+metadata/_custom_type_script = "uid://6m8hgpvsvxe0"
+
+[node name="Area2D" type="Area2D" parent="." unique_id=923255606]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=1780252037]
+position = Vector2(-1, -89)
+shape = SubResource("RectangleShape2D_4ry20")
+
+[node name="HurtBox" type="Area2D" parent="." unique_id=1440404585 node_paths=PackedStringArray("health")]
+script = ExtResource("6_q6cx6")
+health = NodePath("../Health")
+metadata/_custom_type_script = "uid://d0urpb7583m53"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HurtBox" unique_id=1726708140]
+position = Vector2(-0.5, -13.5)
+shape = SubResource("RectangleShape2D_ea06a")
+
+[node name="Hitbox" type="Area2D" parent="." unique_id=341097065]
+script = ExtResource("7_atfey")
+force_height = 64.0
+force_velocity = -180.0
+disable_duration = 0.3
+damage = 75
+metadata/_custom_type_script = "uid://ckwnd0fgcmkc8"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox" unique_id=1288657640]
+position = Vector2(0, -94.5)
+shape = SubResource("RectangleShape2D_wmk1v")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1480716749]
+position = Vector2(0, -80)
+sprite_frames = SubResource("SpriteFrames_ea06a")
+animation = &"idle"
+autoplay = "idle"
+
+[connection signal="body_entered" from="Area2D" to="." method="_on_area_2d_body_entered"]

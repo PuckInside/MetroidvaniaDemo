@@ -255,7 +255,6 @@ texture_filter = 1
 position = Vector2(0, -147)
 sprite_frames = SubResource("SpriteFrames_eiw37")
 animation = &"run"
-frame_progress = 0.80952555
 script = SubResource("GDScript_x1f5c")
 player = NodePath("..")
 
@@ -263,7 +262,7 @@ player = NodePath("..")
 position = Vector2(75, -140)
 script = ExtResource("12_eiw37")
 force_height = 24.0
-force_velocity = 160.0
+force_velocity = 180.0
 disable_duration = 0.1
 damage = 20
 metadata/_custom_type_script = "uid://ckwnd0fgcmkc8"
