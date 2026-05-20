@@ -77,12 +77,12 @@ func _on_take_damage(_damage: int, _force: Vector2, _duration: float) -> void:
 		_state_machine.change_state(KustDisabled.NAME)
 
 func _on_death() -> void:
+	_state_machine.change_state(KustDisabled.NAME)
 	set_physics_process(false)
 	$Hitbox.queue_free()
 	$HurtBox.queue_free()
 	$CollisionShape2D.queue_free()
 	$AnimatedSprite2D.play(\"death\")
-	_state_machine.change_state(KustDisabled.NAME)
 	await get_tree().create_timer(1).timeout
 	queue_free()
 
@@ -90,8 +90,9 @@ func _on_area_2d_body_entered(body: Node) -> void:
 	if not body is PlayerController:
 		return
 	
+	await get_tree().create_timer(0.3).timeout
+	
 	if _state_machine.get_state_name() != KustDisabled.NAME:
-		await get_tree().create_timer(0.3).timeout
 		_state_machine.change_state(KustBite.NAME)
 		$AnimatedSprite2D.play(\"bite\")
 		await get_tree().create_timer(0.72).timeout

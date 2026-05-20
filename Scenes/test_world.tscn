@@ -1029,14 +1029,15 @@ position = Vector2(366, -3)
 [node name="Slime" parent="." unique_id=1007851427 instance=ExtResource("8_0fcji")]
 position = Vector2(1587, -76)
 
+[node name="Kust" parent="." unique_id=1826992119 instance=ExtResource("9_dqfvb")]
+position = Vector2(128, 0)
+
 [node name="Player" parent="." unique_id=1724247843 instance=ExtResource("8_dqfvb")]
-position = Vector2(-150, -37)
+position = Vector2(-311, -163)
 
 [node name="Camera2D" type="Camera2D" parent="Player" unique_id=388927213]
+position = Vector2(161, 126)
 offset = Vector2(0, -150)
 process_callback = 0
 position_smoothing_enabled = true
 position_smoothing_speed = 6.0
-
-[node name="Kust" parent="." unique_id=1826992119 instance=ExtResource("9_dqfvb")]
-position = Vector2(128, 0)

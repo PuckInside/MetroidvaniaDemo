@@ -38,15 +38,9 @@ var on_floor: bool = false:
 		if value == false:
 			coyote_timer.stop()
 			on_floor = false
-			if dash_available and has_air_dash:
-				dash_available = true
-			else:
-				dash_available = false
 		else:
 			coyote_timer.start()
 			on_floor = true
-			double_jump_available = has_double_jump
-			dash_available = true
 
 func _ready() -> void:
 	assert(dash_curve is Curve)
@@ -64,6 +58,12 @@ func _ready() -> void:
 	_state_machine.add_state(PlayerShotState.new(self, 0.3, 0.5))
 
 func _physics_process(delta: float) -> void:
+	if on_floor:
+		double_jump_available = has_double_jump
+		dash_available = true
+	else:
+		dash_available = has_air_dash and dash_available
+	
 	_coyote_time_update()
 	_jump_buffering()
 	_state_machine.physics_update(delta)

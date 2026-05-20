@@ -21,6 +21,7 @@ func _init(body: PlayerController, dash_distance: float) -> void:
 
 func enter(_previous_state: String) -> void:
 	if not _player.dash_available or not _player.dash_cooldown.is_stopped():
+		state_machine.change_state(PlayerIdleState.NAME)
 		return
 	
 	_covered_distance = 0.0
