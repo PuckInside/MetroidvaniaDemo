@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://0pyyf1gsbq0v"]
 
 [ext_resource type="Texture2D" uid="uid://dyfqbdw0yd3q4" path="res://Entity/Slime/slime_run.png" id="1_j8x4d"]
-[ext_resource type="Script" uid="uid://6m8hgpvsvxe0" path="res://Node/health.gd" id="1_wjbs2"]
+[ext_resource type="Script" uid="uid://6m8hgpvsvxe0" path="res://RefCounter/health.gd" id="1_wjbs2"]
 [ext_resource type="Script" uid="uid://ckwnd0fgcmkc8" path="res://Node/hitbox.gd" id="2_ku2s8"]
 [ext_resource type="Texture2D" uid="uid://ctnjiuxron4xo" path="res://Entity/Slime/slime_death.png" id="2_lvlxf"]
 [ext_resource type="Script" uid="uid://d0urpb7583m53" path="res://Node/hurtbox.gd" id="3_lvlxf"]

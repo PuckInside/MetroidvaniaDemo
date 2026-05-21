@@ -1,11 +1,10 @@
 [gd_scene format=3 uid="uid://bfknycm3aigab"]
 
 [ext_resource type="Script" uid="uid://cifgphpjlyct2" path="res://Entity/Player/player_controller.gd" id="1_x1f5c"]
-[ext_resource type="Script" uid="uid://ddofpvinpcyx8" path="res://Entity/Player/player_hurt_box.gd" id="2_rawpq"]
+[ext_resource type="Script" uid="uid://d0urpb7583m53" path="res://Node/hurtbox.gd" id="2_6pvm4"]
 [ext_resource type="Texture2D" uid="uid://qmx4pynvidsw" path="res://Entity/Player/Animations/dash.png" id="3_7skvd"]
 [ext_resource type="Texture2D" uid="uid://f4vu0w50k42r" path="res://Entity/Player/Animations/attack_1.png" id="3_lj4m2"]
 [ext_resource type="Texture2D" uid="uid://c5sgbbr0hq5av" path="res://Entity/Player/Animations/idle_1.png" id="3_lshpy"]
-[ext_resource type="Script" uid="uid://6m8hgpvsvxe0" path="res://Node/health.gd" id="3_qb0yx"]
 [ext_resource type="Texture2D" uid="uid://drvdlm5pjclgh" path="res://Entity/Player/Animations/attack_2.png" id="4_6pvm4"]
 [ext_resource type="Texture2D" uid="uid://cksm5s353d0ac" path="res://Entity/Player/Animations/idle_2.png" id="4_k7rle"]
 [ext_resource type="Texture2D" uid="uid://jqkxcaqigj01" path="res://Entity/Player/Animations/fall.png" id="4_vhflw"]
@@ -152,37 +151,21 @@ func _ready() -> void:
 	assert(player is PlayerController)
 
 func _process(_delta: float) -> void:
-	flip_spite(player.last_direction)
-	
-	if player.get_state() == PlayerDashState.NAME:
-		play(\"dash\")
-		return
-	
-	if player.get_state() == PlayerAttackState.NAME:
-		play(\"attack\")
-		return
-	
-	if player.get_state() == PlayerShotState.NAME:
-		play(\"shot\")
-		return
-	
-	if player.get_state() == PlayerIdleState.NAME:
-		play(\"idle\")
-	
-	if player.get_state() == PlayerWalkState.NAME:
-		play(\"run\")
-	
-	if not player.is_on_floor() and player.velocity.y <= 0.0:
-		play(\"rise\")
-	
-	if not player.is_on_floor() and player.velocity.y > 0.0:
-		play(\"fall\")
-	
-func flip_spite(facing: float) -> void:
-	if facing > 0.0:
+	if player.facing > 0.0:
 		flip_h = false
-	if facing < 0.0:
+	if player.facing < 0.0:
 		flip_h = true
+	
+	match player.get_state_id():
+		player.States.IDLE: play(\"idle\")
+		player.States.WALK: play(\"run\")
+		player.States.JUMP: play(\"rise\")
+		player.States.DASH: play(\"dash\") 
+		player.States.MELEE_ATTACK: play(\"attack\")
+		player.States.RANGE_ATTACK: play(\"shot\")
+	
+	if not player.is_on_floor() and player.get_state_id() in [player.States.IDLE, player.States.WALK]:
+		play(\"fall\")
 "
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_jksyu"]
@@ -197,7 +180,7 @@ script/source = "extends Hitbox
 @export var accuracy: Curve
 
 var _random = RandomNumberGenerator.new()
-var chance = 1.0
+var _chance = 1.0
 
 func _ready() -> void:
 	super._ready()
@@ -205,7 +188,7 @@ func _ready() -> void:
 
 func deal_damage(lifetime: float) -> void:
 	super.deal_damage(lifetime)
-	chance = _random.randf_range(0.1, 1.0)
+	_chance = _random.randf_range(0.1, 1.0)
 
 func _on_area_entered(hurtbox: HurtBox) -> void:
 	if not hurtbox is HurtBox:
@@ -218,7 +201,7 @@ func _on_area_entered(hurtbox: HurtBox) -> void:
 	var direction = sign(target_pos.x - self_pos.x)
 	var distance = abs(target_pos.x - self_pos.x)
 	
-	if distance >= 300.0 or chance <= accuracy.sample(distance / miss_range):
+	if distance >= 300.0 or _chance <= accuracy.sample(distance / miss_range):
 		var velocity = Vector2(direction * force_velocity, 0.0)
 		velocity = Movement.get_jump(velocity, force_height)
 		hurtbox.take_damage(damage, velocity, disable_duration)
@@ -231,18 +214,18 @@ point_count = 4
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_eiw37"]
 size = Vector2(20, 1200)
 
-[node name="Player" type="CharacterBody2D" unique_id=1724247843 node_paths=PackedStringArray("health")]
+[node name="Player" type="CharacterBody2D" unique_id=1724247843]
 script = ExtResource("1_x1f5c")
+jump_count = 2
 dash_curve = SubResource("Curve_lj4m2")
-health = NodePath("Health")
+has_air_dash = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1791181917]
 position = Vector2(0, -148)
 shape = SubResource("CapsuleShape2D_x1f5c")
 
-[node name="HurtBox" type="Area2D" parent="." unique_id=777152150 node_paths=PackedStringArray("health")]
-script = ExtResource("2_rawpq")
-health = NodePath("../Health")
+[node name="HurtBox" type="Area2D" parent="." unique_id=777152150]
+script = ExtResource("2_6pvm4")
 metadata/_custom_type_script = "uid://d0urpb7583m53"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="HurtBox" unique_id=1449747364]
@@ -283,26 +266,24 @@ metadata/_custom_type_script = "uid://ckwnd0fgcmkc8"
 rotation = -1.5707964
 shape = SubResource("RectangleShape2D_eiw37")
 
-[node name="Health" type="Node" parent="." unique_id=1294675357]
-script = ExtResource("3_qb0yx")
-metadata/_custom_type_script = "uid://6m8hgpvsvxe0"
-
 [node name="CoyoteTime" type="Timer" parent="." unique_id=1453210619]
 wait_time = 0.12
 one_shot = true
 
 [node name="JumpBuffer" type="Timer" parent="." unique_id=380468885]
-wait_time = 0.1
+wait_time = 0.2
 one_shot = true
 
 [node name="DashCooldown" type="Timer" parent="." unique_id=1870535715]
-wait_time = 0.125
+wait_time = 0.3
 one_shot = true
 
 [node name="AttackCooldown" type="Timer" parent="." unique_id=57235101]
-wait_time = 0.2
+wait_time = 0.35
 one_shot = true
 
 [node name="ShotCooldown" type="Timer" parent="." unique_id=515677154]
 wait_time = 0.3
 one_shot = true
+
+[connection signal="damaged" from="HurtBox" to="." method="_on_take_damage"]

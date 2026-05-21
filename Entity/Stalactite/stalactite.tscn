@@ -2,19 +2,18 @@
 
 [ext_resource type="Texture2D" uid="uid://c7crln3bwte3y" path="res://Assets/Cave - SmallRocks.png" id="1_ydpj1"]
 [ext_resource type="Script" uid="uid://d0urpb7583m53" path="res://Node/hurtbox.gd" id="2_ximai"]
-[ext_resource type="Script" uid="uid://6m8hgpvsvxe0" path="res://Node/health.gd" id="3_jsim7"]
 [ext_resource type="PackedScene" uid="uid://cmu0ivwvscj75" path="res://Entity/Stalactite/rock_particles.tscn" id="4_ximai"]
 
 [sub_resource type="GDScript" id="GDScript_x5o4p"]
 resource_name = "Stalactite"
 script/source = "extends Hitbox
 
-@onready var health := $Health
+@export var max_health := 60
+@onready var health := Health.new(max_health)
 
 func _ready() -> void:
 	super._ready()
 	health.death.connect(_on_death)
-	health.health_changed.connect(_on_damage)
 
 func _on_death() -> void:
 	$AnimatedSprite2D.queue_free()
@@ -25,8 +24,9 @@ func _on_death() -> void:
 	await get_tree().create_timer(0.5).timeout
 	queue_free()
 
-func _on_damage(_hp: float) -> void:
+func _on_damaged(amount: int, _force: Vector2, _duration: float) -> void:
 	$RockParticles.emitting = true
+	health.health_point -= amount
 
 func _on_area_entered(hurtbox: HurtBox) -> void:
 	if not hurtbox.owner is PlayerController:
@@ -68,11 +68,6 @@ damage = 15
 is_always_active = true
 metadata/_custom_type_script = "uid://ckwnd0fgcmkc8"
 
-[node name="Health" type="Node" parent="." unique_id=1198581519]
-script = ExtResource("3_jsim7")
-max_health = 60
-metadata/_custom_type_script = "uid://6m8hgpvsvxe0"
-
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=131003732]
 position = Vector2(0, -294)
 shape = SubResource("RectangleShape2D_1s6lp")
@@ -83,9 +78,8 @@ shape = SubResource("RectangleShape2D_1s6lp")
 position = Vector2(0, -282.5)
 shape = SubResource("RectangleShape2D_6s841")
 
-[node name="HurtBox" type="Area2D" parent="." unique_id=899160791 node_paths=PackedStringArray("health")]
+[node name="HurtBox" type="Area2D" parent="." unique_id=899160791]
 script = ExtResource("2_ximai")
-health = NodePath("../Health")
 metadata/_custom_type_script = "uid://d0urpb7583m53"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="HurtBox" unique_id=902085104]
@@ -100,3 +94,5 @@ lifetime = 0.12
 self_modulate = Color(0.6723874, 0.24831021, 0.28582588, 1)
 position = Vector2(0, -296)
 sprite_frames = SubResource("SpriteFrames_dkxw8")
+
+[connection signal="damaged" from="HurtBox" to="." method="_on_damaged"]

@@ -4,11 +4,8 @@
 [ext_resource type="Texture2D" uid="uid://b723b5xds5o0i" path="res://Assets/DebugTiles.png" id="1_skmq4"]
 [ext_resource type="Texture2D" uid="uid://b12wxhtkeqqt0" path="res://Assets/Cave - Platforms.png" id="3_0fcji"]
 [ext_resource type="PackedScene" uid="uid://ddg5li18hlxo6" path="res://Entity/Spike/spike.tscn" id="3_707cn"]
-[ext_resource type="Script" uid="uid://6m8hgpvsvxe0" path="res://Node/health.gd" id="5_iwv7r"]
 [ext_resource type="PackedScene" uid="uid://s4v4yn5ie6xo" path="res://Entity/Stalactite/stalactite.tscn" id="7_p7j4p"]
-[ext_resource type="PackedScene" uid="uid://0pyyf1gsbq0v" path="res://Entity/Slime/slime.tscn" id="8_0fcji"]
 [ext_resource type="PackedScene" uid="uid://bfknycm3aigab" path="res://Entity/Player/player.tscn" id="8_dqfvb"]
-[ext_resource type="PackedScene" uid="uid://4egv10rvcmf8" path="res://Entity/Kust/kust.tscn" id="9_dqfvb"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_dqfvb"]
 texture = ExtResource("1_p7j4p")
@@ -962,57 +959,11 @@ sources/1 = SubResource("TileSetAtlasSource_au00k")
 sources/0 = SubResource("TileSetAtlasSource_dqfvb")
 sources/2 = SubResource("TileSetAtlasSource_yrarp")
 
-[sub_resource type="GDScript" id="GDScript_kt01x"]
-resource_name = "TestBox"
-script/source = "extends HurtBox
-
-func take_damage(damage: int, _force: Vector2 = Vector2.ZERO, _duration: float = 0.2) -> void:
-	super.take_damage(damage, _force, _duration)
-	print(\"I'm under ATTACK! Damage: \", damage)
-"
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_iwv7r"]
-size = Vector2(252, 256)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_iwv7r"]
-atlas = ExtResource("1_skmq4")
-region = Rect2(240, 208, 64, 64)
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_kt01x"]
-animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_iwv7r")
-}],
-"loop": true,
-"name": &"default",
-"speed": 5.0
-}]
-
 [node name="World" type="Node2D" unique_id=1603821883]
 
 [node name="TileMapLayer" type="TileMapLayer" parent="." unique_id=1020040591]
 tile_map_data = PackedByteArray("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")
 tile_set = SubResource("TileSet_707cn")
-
-[node name="test" type="Area2D" parent="." unique_id=739577732 node_paths=PackedStringArray("health")]
-position = Vector2(709, -130)
-script = SubResource("GDScript_kt01x")
-health = NodePath("Health")
-invincible = true
-metadata/_custom_type_script = "uid://d0urpb7583m53"
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="test" unique_id=757907262]
-position = Vector2(-1, 0)
-shape = SubResource("RectangleShape2D_iwv7r")
-
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="test" unique_id=1915685607]
-scale = Vector2(4, 4)
-sprite_frames = SubResource("SpriteFrames_kt01x")
-
-[node name="Health" type="Node" parent="test" unique_id=129359376]
-script = ExtResource("5_iwv7r")
-metadata/_custom_type_script = "uid://6m8hgpvsvxe0"
 
 [node name="Spike" parent="." unique_id=565945566 instance=ExtResource("3_707cn")]
 position = Vector2(-736, -32)
@@ -1023,15 +974,6 @@ position = Vector2(-672, -32)
 [node name="Spike3" parent="." unique_id=984218769 instance=ExtResource("3_707cn")]
 position = Vector2(-608, -32)
 
-[node name="Stalactite" parent="." unique_id=1221269544 instance=ExtResource("7_p7j4p")]
-position = Vector2(366, -3)
-
-[node name="Slime" parent="." unique_id=1007851427 instance=ExtResource("8_0fcji")]
-position = Vector2(1587, -76)
-
-[node name="Kust" parent="." unique_id=1826992119 instance=ExtResource("9_dqfvb")]
-position = Vector2(128, 0)
-
 [node name="Player" parent="." unique_id=1724247843 instance=ExtResource("8_dqfvb")]
 position = Vector2(-311, -163)
 
@@ -1041,3 +983,6 @@ offset = Vector2(0, -150)
 process_callback = 0
 position_smoothing_enabled = true
 position_smoothing_speed = 6.0
+
+[node name="Stalactite" parent="." unique_id=1221269544 instance=ExtResource("7_p7j4p")]
+position = Vector2(479, -2)

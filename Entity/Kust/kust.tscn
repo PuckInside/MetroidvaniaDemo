@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://bfuyvjeqv0dur" path="res://Entity/Kust/kust_bite_2.png" id="2_4bm4m"]
 [ext_resource type="Texture2D" uid="uid://b0yygm3m06sk7" path="res://Entity/Kust/kust_bite_3.png" id="3_hq0ll"]
 [ext_resource type="Texture2D" uid="uid://cad46ibvp1iq2" path="res://Entity/Kust/kust_idle.png" id="4_strwj"]
-[ext_resource type="Script" uid="uid://6m8hgpvsvxe0" path="res://Node/health.gd" id="5_strwj"]
+[ext_resource type="Script" uid="uid://6m8hgpvsvxe0" path="res://RefCounter/health.gd" id="5_strwj"]
 [ext_resource type="Script" uid="uid://d0urpb7583m53" path="res://Node/hurtbox.gd" id="6_q6cx6"]
 [ext_resource type="Script" uid="uid://ckwnd0fgcmkc8" path="res://Node/hitbox.gd" id="7_atfey"]
 [ext_resource type="Texture2D" uid="uid://cpjkwac4r2j3v" path="res://Entity/Kust/kust_die_1.png" id="7_ea06a"]

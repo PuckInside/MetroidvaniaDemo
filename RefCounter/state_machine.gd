@@ -1,38 +1,38 @@
 extends RefCounted
 class_name StateMachine
 
-var owner
-var _states: Dictionary = {}
+var _states: Dictionary[int, IState] = {}
 var _current_state: IState
 
-func add_state(state: IState) -> void:
-	_states[state.name] = state
-	state.state_machine = self
+func _init(state: IState, id: int) -> void:
+	add_state(state, id)
+	_current_state = _states.get(id)
 
-func set_init_state(state_name: String) -> void:
-	change_state(state_name)
+func add_state(state: IState, id: int) -> void:
+	_states[id] = state
 
-func change_state(state_name: String) -> void:
-	if _current_state:
-		_current_state.exit()
+func remove_state(id: int) -> void:
+	if id == get_state_id():
+		push_error("Нельзя удалять активное состояние!")
+		return
 	
-	_current_state = _states.get(state_name)
-	if _current_state:
-		_current_state.enter(_current_state.name)
-	else:
-		push_warning("State not found: " + state_name)
+	_states.erase(id)
+
+func change_state(id: int) -> void:
+	assert(_current_state is IState)
+	
+	_current_state.exit()
+	_current_state = _states.get(id)
+	_current_state.enter()
 
 func update(_delta: float) -> void:
-	if _current_state:
-		_current_state.update(_delta)
+	_current_state.update(_delta)
 
 func physics_update(_delta: float) -> void:
-	if _current_state:
-		_current_state.physics_update(_delta)
+	_current_state.physics_update(_delta)
 	
 func handle_input(_event: InputEvent) -> void:
-	if _current_state:
-		_current_state.handle_input(_event)
+	_current_state.handle_input(_event)
 
-func get_state_name() -> String:
-	return _current_state.name
+func get_state_id() -> int:
+	return _states.find_key(_current_state)

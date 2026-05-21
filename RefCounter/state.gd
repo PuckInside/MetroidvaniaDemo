@@ -1,16 +1,13 @@
 extends RefCounted
 class_name IState
 
-var name: String = "State"
-var state_machine: StateMachine
-
-static func is_triggered() -> bool:
-	return false
+@warning_ignore("unused_signal")
+signal finished
 
 func _init() -> void:
 	assert(false, "Нельзя создавать экземпляр у интерфеса")
 
-func enter(_previous_state: String) -> void:
+func enter() -> void:
 	pass
 
 func exit() -> void:
