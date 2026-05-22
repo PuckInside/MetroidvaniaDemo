@@ -2,11 +2,11 @@
 
 [ext_resource type="Script" uid="uid://cifgphpjlyct2" path="res://Entity/Player/player_controller.gd" id="1_x1f5c"]
 [ext_resource type="Script" uid="uid://d0urpb7583m53" path="res://Node/hurtbox.gd" id="2_6pvm4"]
+[ext_resource type="Texture2D" uid="uid://difg62hapi642" path="res://Entity/Player/Animations/melee_attack_1.png" id="3_6pvm4"]
 [ext_resource type="Texture2D" uid="uid://qmx4pynvidsw" path="res://Entity/Player/Animations/dash.png" id="3_7skvd"]
-[ext_resource type="Texture2D" uid="uid://f4vu0w50k42r" path="res://Entity/Player/Animations/attack_1.png" id="3_lj4m2"]
 [ext_resource type="Texture2D" uid="uid://c5sgbbr0hq5av" path="res://Entity/Player/Animations/idle_1.png" id="3_lshpy"]
-[ext_resource type="Texture2D" uid="uid://drvdlm5pjclgh" path="res://Entity/Player/Animations/attack_2.png" id="4_6pvm4"]
 [ext_resource type="Texture2D" uid="uid://cksm5s353d0ac" path="res://Entity/Player/Animations/idle_2.png" id="4_k7rle"]
+[ext_resource type="Texture2D" uid="uid://dkfweu0v8n6ke" path="res://Entity/Player/Animations/melee_attack_2.png" id="4_qndt7"]
 [ext_resource type="Texture2D" uid="uid://jqkxcaqigj01" path="res://Entity/Player/Animations/fall.png" id="4_vhflw"]
 [ext_resource type="Texture2D" uid="uid://dh8absg2fjbxt" path="res://Entity/Player/Animations/idle_3.png" id="5_ve7px"]
 [ext_resource type="Texture2D" uid="uid://c8jficmop86gv" path="res://Entity/Player/Animations/idle_4.png" id="6_7skvd"]
@@ -35,20 +35,17 @@ size = Vector2(78, 260)
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("3_lj4m2")
+"texture": ExtResource("3_6pvm4")
 }, {
 "duration": 1.0,
-"texture": ExtResource("4_6pvm4")
+"texture": ExtResource("4_qndt7")
 }, {
 "duration": 1.0,
-"texture": ExtResource("4_6pvm4")
-}, {
-"duration": 1.0,
-"texture": ExtResource("3_lj4m2")
+"texture": ExtResource("3_6pvm4")
 }],
 "loop": false,
 "name": &"attack",
-"speed": 8.0
+"speed": 6.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -169,7 +166,7 @@ func _process(_delta: float) -> void:
 "
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_jksyu"]
-size = Vector2(222.5, 220)
+size = Vector2(253.25, 220)
 
 [sub_resource type="GDScript" id="GDScript_eiw37"]
 resource_name = "ShotHitbox"
@@ -237,6 +234,8 @@ texture_filter = 1
 position = Vector2(0, -147)
 sprite_frames = SubResource("SpriteFrames_eiw37")
 animation = &"attack"
+frame = 2
+frame_progress = 1.0
 script = SubResource("GDScript_x1f5c")
 player = NodePath("..")
 
