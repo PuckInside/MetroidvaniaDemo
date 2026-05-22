@@ -48,7 +48,7 @@ func _on_death() -> void:
 
 func _on_hurt_box_damaged(damage: int, _force: Vector2, _duration: float) -> void:
 	health.health_point -= damage
-	facing *= -1.0
+	facing = _force.sign().x
 	var knockback := KnockbackState.new(self, _force, 0.24)
 	
 	_state_machine.add_state(knockback, KNOCKBACK)
@@ -59,7 +59,11 @@ func _on_hurt_box_damaged(damage: int, _force: Vector2, _duration: float) -> voi
 	_state_machine.remove_state(KNOCKBACK)
 
 func _on_hitbox_hit_landed(_receiver: Node) -> void:
-	facing *= -1.0
+	var self_pos = self.global_position 
+	var target_pos = _receiver.global_position
+	var direction = sign(target_pos.x - self_pos.x)
+	
+	facing = -direction
 "
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_j8x4d"]
@@ -167,8 +171,9 @@ shape = SubResource("RectangleShape2D_wjbs2")
 [node name="Hitbox" type="Area2D" parent="." unique_id=900385150]
 script = ExtResource("2_ku2s8")
 force_height = 32.0
-force_velocity = 1200.0
-damage = 40
+force_velocity = 1600.0
+disable_duration = 0.4
+damage = 20
 is_always_active = true
 metadata/_custom_type_script = "uid://ckwnd0fgcmkc8"
 

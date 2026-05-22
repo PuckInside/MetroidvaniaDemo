@@ -1,5 +1,6 @@
 [gd_scene format=3 uid="uid://4egv10rvcmf8"]
 
+[ext_resource type="PackedScene" uid="uid://cmu0ivwvscj75" path="res://Entity/Stalactite/rock_particles.tscn" id="1_ea06a"]
 [ext_resource type="Texture2D" uid="uid://dd6pch0kgdu36" path="res://Entity/Kust/kust_bite_1.png" id="1_h76qk"]
 [ext_resource type="Texture2D" uid="uid://bfuyvjeqv0dur" path="res://Entity/Kust/kust_bite_2.png" id="2_4bm4m"]
 [ext_resource type="Texture2D" uid="uid://b0yygm3m06sk7" path="res://Entity/Kust/kust_bite_3.png" id="3_hq0ll"]
@@ -37,6 +38,9 @@ func _ready() -> void:
 	health.death.connect(_on_death)
 	
 func _on_death() -> void:
+	var knockback := KnockbackState.new(self, Vector2.ZERO, 9999)
+	_state_machine.add_state(knockback, KNOCKBACK)
+	_state_machine.change_state(KNOCKBACK)
 	set_physics_process(false)
 	$Hitbox.queue_free()
 	$HurtBox.queue_free()
@@ -50,6 +54,7 @@ func _on_hurt_box_damaged(damage: int, _force: Vector2, _duration: float) -> voi
 		await bite.finished
 	
 	health.health_point -= damage
+	$RockParticles.emitting = true
 	var knockback := KnockbackState.new(self, _force, 3)
 	
 	_state_machine.add_state(knockback, KNOCKBACK)
@@ -118,6 +123,8 @@ script = SubResource("GDScript_q6cx6")
 position = Vector2(0, 13.5)
 shape = SubResource("RectangleShape2D_atfey")
 
+[node name="RockParticles" parent="." unique_id=1311772473 instance=ExtResource("1_ea06a")]
+
 [node name="Area2D" type="Area2D" parent="." unique_id=923255606]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=1780252037]
@@ -147,10 +154,8 @@ shape = SubResource("RectangleShape2D_wmk1v")
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1480716749]
 position = Vector2(0, -80)
 sprite_frames = SubResource("SpriteFrames_ea06a")
-animation = &"bite"
+animation = &"idle"
 autoplay = "idle"
-frame = 2
-frame_progress = 1.0
 
 [connection signal="body_entered" from="Area2D" to="." method="_on_area_2d_body_entered"]
 [connection signal="damaged" from="HurtBox" to="." method="_on_hurt_box_damaged"]

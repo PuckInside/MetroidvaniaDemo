@@ -117,6 +117,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("ranged_attack") and can_attack_state and can_shoot:
 		_state_machine.change_state(States.RANGE_ATTACK)
 		_shot_cooldown.start()
+		cartridges -= 1
 
 func get_state_id() -> int:
 	return _state_machine.get_state_id()

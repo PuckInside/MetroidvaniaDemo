@@ -970,10 +970,10 @@ tile_set = SubResource("TileSet_707cn")
 position = Vector2(-736, -32)
 
 [node name="Spike2" parent="." unique_id=1789900157 instance=ExtResource("3_707cn")]
-position = Vector2(-672, -32)
+position = Vector2(-674, -32)
 
 [node name="Spike3" parent="." unique_id=984218769 instance=ExtResource("3_707cn")]
-position = Vector2(-608, -32)
+position = Vector2(-612, -33)
 
 [node name="Player" parent="." unique_id=1724247843 instance=ExtResource("8_dqfvb")]
 position = Vector2(-311, -163)
