@@ -4,7 +4,8 @@
 [ext_resource type="Texture2D" uid="uid://b723b5xds5o0i" path="res://Assets/DebugTiles.png" id="1_skmq4"]
 [ext_resource type="Texture2D" uid="uid://b12wxhtkeqqt0" path="res://Assets/Cave - Platforms.png" id="3_0fcji"]
 [ext_resource type="PackedScene" uid="uid://ddg5li18hlxo6" path="res://Entity/Spike/spike.tscn" id="3_707cn"]
-[ext_resource type="PackedScene" uid="uid://s4v4yn5ie6xo" path="res://Entity/Stalactite/stalactite.tscn" id="7_p7j4p"]
+[ext_resource type="PackedScene" uid="uid://0pyyf1gsbq0v" path="res://Entity/Slime/slime.tscn" id="6_kt01x"]
+[ext_resource type="PackedScene" uid="uid://4egv10rvcmf8" path="res://Entity/Kust/kust.tscn" id="7_p7j4p"]
 [ext_resource type="PackedScene" uid="uid://bfknycm3aigab" path="res://Entity/Player/player.tscn" id="8_dqfvb"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_dqfvb"]
@@ -984,5 +985,8 @@ process_callback = 0
 position_smoothing_enabled = true
 position_smoothing_speed = 6.0
 
-[node name="Stalactite" parent="." unique_id=1221269544 instance=ExtResource("7_p7j4p")]
-position = Vector2(479, -2)
+[node name="Slime" parent="." unique_id=1007851427 instance=ExtResource("6_kt01x")]
+position = Vector2(1688, -124)
+
+[node name="Kust" parent="." unique_id=1826992119 instance=ExtResource("7_p7j4p")]
+position = Vector2(289, 0)

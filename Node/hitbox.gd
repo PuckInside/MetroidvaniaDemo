@@ -1,6 +1,8 @@
 extends Area2D
 class_name Hitbox
 
+signal hit_landed(receiver: Node)
+
 @export var force_height: float = 0.0
 @export var force_velocity: float = 0.0
 @export var disable_duration: float = 0.0
@@ -33,4 +35,5 @@ func _on_area_entered(hurtbox: HurtBox) -> void:
 	var velocity = Vector2(direction * force_velocity, 0.0)
 	velocity = Movement.get_jump(velocity, force_height)
 	hurtbox.take_damage(damage, velocity, disable_duration)
+	hit_landed.emit(hurtbox.owner)
 	

@@ -4,7 +4,6 @@
 [ext_resource type="Texture2D" uid="uid://bfuyvjeqv0dur" path="res://Entity/Kust/kust_bite_2.png" id="2_4bm4m"]
 [ext_resource type="Texture2D" uid="uid://b0yygm3m06sk7" path="res://Entity/Kust/kust_bite_3.png" id="3_hq0ll"]
 [ext_resource type="Texture2D" uid="uid://cad46ibvp1iq2" path="res://Entity/Kust/kust_idle.png" id="4_strwj"]
-[ext_resource type="Script" uid="uid://6m8hgpvsvxe0" path="res://RefCounter/health.gd" id="5_strwj"]
 [ext_resource type="Script" uid="uid://d0urpb7583m53" path="res://Node/hurtbox.gd" id="6_q6cx6"]
 [ext_resource type="Script" uid="uid://ckwnd0fgcmkc8" path="res://Node/hitbox.gd" id="7_atfey"]
 [ext_resource type="Texture2D" uid="uid://cpjkwac4r2j3v" path="res://Entity/Kust/kust_die_1.png" id="7_ea06a"]
@@ -15,88 +14,50 @@
 resource_name = "kust"
 script/source = "extends CharacterBody2D
 
-class KustWait extends IState:
-	const NAME := \"Wait\"
-	var _body: CharacterBody2D
-	
-	func _init(body: CharacterBody2D) -> void:
-		name = NAME
-		_body = body
+const WAIT := 0
+const BITE := 1
+const KNOCKBACK := 9
 
-class KustBite extends IState:
-	const NAME := \"Bite\"
-	var _body: CharacterBody2D
-	var _prepare: float
-	var _duration: float
-	var _hitbox: Hitbox
-	
-	func _init(body: CharacterBody2D, hitbox: Hitbox, prepare: float, duration: float) -> void:
-		assert(body is CharacterBody2D, \"Ссылка на игрока не должна быть пустым\")
-		assert(hitbox is Hitbox, \"Ссылка на игрока не должна быть пустым\")
-		
-		name = NAME
-		_body = body
-		_hitbox = hitbox
-		_prepare = prepare
-		_duration = duration
-	
-	func enter(_previous_state: String) -> void:
-		await _body.get_tree().create_timer(_prepare).timeout
-		_hitbox.deal_damage(_duration)
-		await _body.get_tree().create_timer(_duration).timeout
-		_body._state_machine.change_state(KustWait.NAME)
+@export var max_health: int = 60
+@onready var wait := KustWait.new(self, $Area2D)
+@onready var bite := KustBite.new(self, $Hitbox, 0.4, 0.3)
 
-class KustDisabled extends IState:
-	const NAME := \"Disabled\"
-	var _body: CharacterBody2D
-	var _duration: float
-	
-	func _init(body: CharacterBody2D, duration: float) -> void:
-		name = NAME
-		_body = body
-		_duration = duration
-	
-	func enter(_previous_state: String) -> void:
-		await _body.get_tree().create_timer(_duration).timeout
-		_body._state_machine.change_state(KustWait.NAME)
-
-var _state_machine: StateMachine = StateMachine.new()
+var health: Health = Health.new(max_health)
+var _state_machine: StateMachine
 
 func _ready() -> void:
-	var init_state := KustWait.new(self)
-	_state_machine.add_state(init_state)
-	_state_machine.set_init_state(init_state.name)
-	_state_machine.add_state(KustDisabled.new(self, 1.0))
-	_state_machine.add_state(KustBite.new(self, $Hitbox, 0.125, 0.36))
+	wait.finished.connect(func(): _state_machine.change_state(BITE))
+	bite.finished.connect(func(): _state_machine.change_state(WAIT))
+	wait.finished.connect(func(): $AnimatedSprite2D.play(\"bite\"))
+	bite.finished.connect(func(): $AnimatedSprite2D.play(\"idle\"))
 	
-	$HurtBox.on_take_damage.connect(_on_take_damage)
-	$Health.death.connect(_on_death)
-
-func _on_take_damage(_damage: int, _force: Vector2, _duration: float) -> void:
-	if _state_machine.get_state_name() == KustWait.NAME:
-		_state_machine.change_state(KustDisabled.NAME)
-
+	_state_machine = StateMachine.new(wait, WAIT)
+	_state_machine.add_state(bite, BITE)
+	
+	health.death.connect(_on_death)
+	
 func _on_death() -> void:
-	_state_machine.change_state(KustDisabled.NAME)
 	set_physics_process(false)
 	$Hitbox.queue_free()
 	$HurtBox.queue_free()
 	$CollisionShape2D.queue_free()
 	$AnimatedSprite2D.play(\"death\")
-	await get_tree().create_timer(1).timeout
+	await $AnimatedSprite2D.animation_finished
 	queue_free()
 
-func _on_area_2d_body_entered(body: Node) -> void:
-	if not body is PlayerController:
-		return
+func _on_hurt_box_damaged(damage: int, _force: Vector2, _duration: float) -> void:
+	if _state_machine.get_state_id() == BITE:
+		await bite.finished
 	
-	await get_tree().create_timer(0.3).timeout
+	health.health_point -= damage
+	var knockback := KnockbackState.new(self, _force, 3)
 	
-	if _state_machine.get_state_name() != KustDisabled.NAME:
-		_state_machine.change_state(KustBite.NAME)
-		$AnimatedSprite2D.play(\"bite\")
-		await get_tree().create_timer(0.72).timeout
-		$AnimatedSprite2D.play(\"idle\")
+	_state_machine.add_state(knockback, KNOCKBACK)
+	_state_machine.change_state(KNOCKBACK)
+	await knockback.finished
+	
+	_state_machine.change_state(WAIT)
+	_state_machine.remove_state(KNOCKBACK)
 "
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_atfey"]
@@ -157,20 +118,14 @@ script = SubResource("GDScript_q6cx6")
 position = Vector2(0, 13.5)
 shape = SubResource("RectangleShape2D_atfey")
 
-[node name="Health" type="Node" parent="." unique_id=1132105609]
-script = ExtResource("5_strwj")
-max_health = 60
-metadata/_custom_type_script = "uid://6m8hgpvsvxe0"
-
 [node name="Area2D" type="Area2D" parent="." unique_id=923255606]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=1780252037]
 position = Vector2(-1, -89)
 shape = SubResource("RectangleShape2D_4ry20")
 
-[node name="HurtBox" type="Area2D" parent="." unique_id=1440404585 node_paths=PackedStringArray("health")]
+[node name="HurtBox" type="Area2D" parent="." unique_id=1440404585]
 script = ExtResource("6_q6cx6")
-health = NodePath("../Health")
 metadata/_custom_type_script = "uid://d0urpb7583m53"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="HurtBox" unique_id=1726708140]
@@ -192,7 +147,10 @@ shape = SubResource("RectangleShape2D_wmk1v")
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1480716749]
 position = Vector2(0, -80)
 sprite_frames = SubResource("SpriteFrames_ea06a")
-animation = &"idle"
+animation = &"bite"
 autoplay = "idle"
+frame = 2
+frame_progress = 1.0
 
 [connection signal="body_entered" from="Area2D" to="." method="_on_area_2d_body_entered"]
+[connection signal="damaged" from="HurtBox" to="." method="_on_hurt_box_damaged"]

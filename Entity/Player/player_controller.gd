@@ -125,7 +125,7 @@ func _on_state_finished() -> void:
 	_state_machine.change_state(States.IDLE)
 
 func _on_take_damage(damage: int, force: Vector2, duration: float):
-	var knockback := PlayerKnockbackState.new(self, force, duration)
+	var knockback := KnockbackState.new(self, force, duration)
 	health.health_point -= damage
 	
 	_state_machine.add_state(knockback, States.KNOCKBACK)

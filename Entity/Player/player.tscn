@@ -243,8 +243,8 @@ player = NodePath("..")
 position = Vector2(75, -140)
 script = ExtResource("12_eiw37")
 force_height = 24.0
-force_velocity = 180.0
-disable_duration = 0.1
+force_velocity = 450.0
+disable_duration = 0.2
 damage = 20
 metadata/_custom_type_script = "uid://ckwnd0fgcmkc8"
 

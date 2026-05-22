@@ -1,7 +1,6 @@
 [gd_scene format=3 uid="uid://0pyyf1gsbq0v"]
 
 [ext_resource type="Texture2D" uid="uid://dyfqbdw0yd3q4" path="res://Entity/Slime/slime_run.png" id="1_j8x4d"]
-[ext_resource type="Script" uid="uid://6m8hgpvsvxe0" path="res://RefCounter/health.gd" id="1_wjbs2"]
 [ext_resource type="Script" uid="uid://ckwnd0fgcmkc8" path="res://Node/hitbox.gd" id="2_ku2s8"]
 [ext_resource type="Texture2D" uid="uid://ctnjiuxron4xo" path="res://Entity/Slime/slime_death.png" id="2_lvlxf"]
 [ext_resource type="Script" uid="uid://d0urpb7583m53" path="res://Node/hurtbox.gd" id="3_lvlxf"]
@@ -10,73 +9,21 @@
 resource_name = "Slime"
 script/source = "extends CharacterBody2D
 
-class SlimeWalk extends IState:
-	const NAME := \"Walk\"
-	var _move_speed: float = 640.0
-	var _body: CharacterBody2D
-	
-	func _init(body: CharacterBody2D, move_speed: float) -> void:
-		assert(body is CharacterBody2D, \"Ссылка на игрока не должна быть пустым\")
-		
-		name = NAME
-		_body = body
-		_move_speed = move_speed
-	
-	func physics_update(_delta: float) -> void:
-		if not _body.is_on_floor():
-			_body.velocity = Movement.get_gravity(_body.velocity, _delta)
-	
-		_body.velocity = Movement.get_move(_body.velocity, _body.facing, _move_speed)
+const WALK := 0
+const KNOCKBACK := 9
 
-class SlimeKnockback extends IState:
-	const NAME := \"Knockback\"
-	var _timer: ManualTimer
-	var _force_velocity: Vector2
-	var _duration: float
-	var _body: CharacterBody2D
-	var _hitbox: Hitbox
-	
-	func _init(body: CharacterBody2D, hitbox: Hitbox) -> void:
-		assert(body is CharacterBody2D, \"Ссылка на игрока не должна быть пустым\")
-		
-		name = NAME
-		_body = body
-		_hitbox = hitbox
-		_timer = ManualTimer.new()
-		_force_velocity = Vector2.ZERO
-		_duration = 0.0
-	
-	func setup(force_velocity: Vector2, duration: float) -> void:
-		_force_velocity = force_velocity
-		_duration = duration
-	
-	func physics_update(_delta: float) -> void:
-		if _timer.is_stopped():
-			_hitbox.monitoring = true
-			_body._state_machine.change_state(SlimeWalk.NAME)
-		else:
-			_hitbox.monitoring = false
-		
-		_body.velocity = Movement.get_gravity(_body.velocity, _delta)
-		_body.velocity = Movement.get_brake(_body.velocity, 640.0)
-		_timer.update_timer(_delta)
-
-	func enter(_previous_state: String) -> void:
-		_body.velocity = _force_velocity
-		_timer.start(_duration)
+@export var max_health: int = 60
+@export var speed: float = 320.0
 
 var facing: float = 1.0
-var _state_machine: StateMachine = StateMachine.new()
+var health: Health = Health.new(max_health)
+var _state_machine: StateMachine
 
 func _ready() -> void:
-	var init_state := SlimeWalk.new(self, 320.0)
-	_state_machine.add_state(init_state)
-	_state_machine.set_init_state(init_state.name)
-	_state_machine.add_state(SlimeKnockback.new(self, $Hitbox))
+	var walk: SlimeWalk = SlimeWalk.new(self, speed)
+	_state_machine = StateMachine.new(walk, WALK)
 	
-	$Hitbox.area_entered.connect(_on_deal_damage)
-	$HurtBox.on_take_damage.connect(_on_take_damage)
-	$Health.death.connect(_on_death)
+	health.death.connect(_on_death)
 
 func _physics_process(_delta: float) -> void:
 	if velocity.x > 0:
@@ -90,25 +37,29 @@ func _physics_process(_delta: float) -> void:
 	_state_machine.physics_update(_delta)
 	move_and_slide()
 
-func _on_deal_damage(_body: Area2D) -> void:
-	facing *= -1.0
-
-func _on_take_damage(_damage: int, _force: Vector2, _duration: float) -> void:
-	var knockback = _state_machine._states.get(SlimeKnockback.NAME)
-	if not knockback is SlimeKnockback:
-		return
-	
-	(knockback as SlimeKnockback).setup(_force, _duration)
-	_state_machine.change_state(SlimeKnockback.NAME)
-
 func _on_death() -> void:
 	set_physics_process(false)
 	$Hitbox.queue_free()
 	$HurtBox.queue_free()
 	$CollisionShape2D.queue_free()
 	$AnimatedSprite2D.play(\"death\")
-	await get_tree().create_timer(1).timeout
+	await $AnimatedSprite2D.animation_finished
 	queue_free()
+
+func _on_hurt_box_damaged(damage: int, _force: Vector2, _duration: float) -> void:
+	health.health_point -= damage
+	facing *= -1.0
+	var knockback := KnockbackState.new(self, _force, 0.24)
+	
+	_state_machine.add_state(knockback, KNOCKBACK)
+	_state_machine.change_state(KNOCKBACK)
+	await knockback.finished
+	
+	_state_machine.change_state(WALK)
+	_state_machine.remove_state(KNOCKBACK)
+
+func _on_hitbox_hit_landed(_receiver: Node) -> void:
+	facing *= -1.0
 "
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_j8x4d"]
@@ -200,19 +151,13 @@ animations = [{
 [node name="Slime" type="CharacterBody2D" unique_id=1007851427]
 script = SubResource("GDScript_j8x4d")
 
-[node name="Health" type="Node" parent="." unique_id=132612290]
-script = ExtResource("1_wjbs2")
-max_health = 40
-metadata/_custom_type_script = "uid://6m8hgpvsvxe0"
-
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1671580719]
 position = Vector2(0, -46)
 rotation = -1.5707964
 shape = SubResource("CapsuleShape2D_j8x4d")
 
-[node name="HurtBox" type="Area2D" parent="." unique_id=431006483 node_paths=PackedStringArray("health")]
+[node name="HurtBox" type="Area2D" parent="." unique_id=431006483]
 script = ExtResource("3_lvlxf")
-health = NodePath("../Health")
 metadata/_custom_type_script = "uid://d0urpb7583m53"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="HurtBox" unique_id=1722176254]
@@ -238,3 +183,6 @@ sprite_frames = SubResource("SpriteFrames_f814v")
 animation = &"death"
 autoplay = "idle"
 frame_progress = 1.0
+
+[connection signal="damaged" from="HurtBox" to="." method="_on_hurt_box_damaged"]
+[connection signal="hit_landed" from="Hitbox" to="." method="_on_hitbox_hit_landed"]
