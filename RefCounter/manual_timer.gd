@@ -1,6 +1,8 @@
 extends RefCounted
 class_name ManualTimer
 
+signal finished
+
 var _wait_time: float = 0.0
 var _timer: float = 0.0
 var _stopped: bool = true
@@ -14,11 +16,14 @@ func stop() -> void:
 	_wait_time = 0.0
 	_timer = 0.0
 	_stopped = true
+	finished.emit()
 
 func update_timer(_delta: float) -> void:
-	if _timer >= _wait_time:
-		_stopped = true
+	if _stopped:
 		return
+	
+	if _timer >= _wait_time: 
+		stop()
 	
 	_timer += _delta
 

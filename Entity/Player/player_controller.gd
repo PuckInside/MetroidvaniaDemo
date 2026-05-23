@@ -14,8 +14,8 @@ class_name PlayerController
 @export var jump_count: int = 1
 @export var dash_distance: float = 5 * 64.0
 @export var dash_speed: float = 1680.0
-@export var dash_curve: Curve
 @export var has_air_dash: bool = false
+@export var dash_curve: Curve
 
 @onready var _coyote_timer: Timer = $CoyoteTime
 @onready var _jump_buffer: Timer = $JumpBuffer
@@ -40,6 +40,7 @@ enum States {
 }
 
 var _state_machine: StateMachine
+var _knockback := KnockbackState.new(self)
 var _available_jumps: int = 0
 var _dash_available: bool = false
 
@@ -54,12 +55,13 @@ func _ready() -> void:
 	var melee_attack := PlayerAttackState.new(self, _melee_hitbox, 0.1, 0.2)
 	var range_attack := PlayerAttackState.new(self, _range_hitbox, 0.3, 0.5)
 	
-	for state: IState in [walk, jump, dash, melee_attack, range_attack]:
+	for state: IState in [walk, jump, dash, _knockback, melee_attack, range_attack]:
 		state.finished.connect(_on_state_finished)
 	
 	_state_machine.add_state(walk, States.WALK)
 	_state_machine.add_state(jump, States.JUMP)
 	_state_machine.add_state(dash, States.DASH)
+	_state_machine.add_state(_knockback, States.KNOCKBACK)
 	_state_machine.add_state(melee_attack, States.MELEE_ATTACK)
 	_state_machine.add_state(range_attack, States.RANGE_ATTACK)
 
@@ -126,12 +128,9 @@ func _on_state_finished() -> void:
 	_state_machine.change_state(States.IDLE)
 
 func _on_take_damage(damage: int, force: Vector2, duration: float):
-	var knockback := KnockbackState.new(self, force, duration)
 	health.health_point -= damage
+	if _state_machine.get_state_id() == States.KNOCKBACK:
+		return
 	
-	_state_machine.add_state(knockback, States.KNOCKBACK)
+	_knockback.setup(force, duration)
 	_state_machine.change_state(States.KNOCKBACK)
-	await knockback.finished
-	
-	_state_machine.change_state(States.IDLE)
-	_state_machine.remove_state(States.KNOCKBACK)

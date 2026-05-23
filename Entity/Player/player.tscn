@@ -20,8 +20,8 @@
 [ext_resource type="Texture2D" uid="uid://d7mfbua65t5e" path="res://Entity/Player/Animations/run_1.png" id="15_hkdd6"]
 [ext_resource type="Texture2D" uid="uid://mwc3w68kmf2y" path="res://Entity/Player/Animations/shot_2.png" id="17_qndt7"]
 
-[sub_resource type="Curve" id="Curve_lj4m2"]
-_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.91208786, 0.82682586), -0.9438142, -0.9438142, 0, 0, Vector2(0.99267393, 0.5043638), -1.8154777, 0.0, 0, 0]
+[sub_resource type="Curve" id="Curve_6pvm4"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.8315018, 0.874598), -0.9438142, -0.9438142, 0, 0, Vector2(0.99999994, 0.51033527), -1.8165367, 0.0, 0, 0]
 point_count = 3
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_x1f5c"]
@@ -215,8 +215,8 @@ size = Vector2(20, 1200)
 [node name="Player" type="CharacterBody2D" unique_id=1724247843]
 script = ExtResource("1_x1f5c")
 jump_count = 2
-dash_curve = SubResource("Curve_lj4m2")
 has_air_dash = true
+dash_curve = SubResource("Curve_6pvm4")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1791181917]
 position = Vector2(0, -148)

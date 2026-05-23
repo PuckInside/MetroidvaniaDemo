@@ -18,10 +18,13 @@ const KNOCKBACK := 9
 var facing: float = 1.0
 var health: Health = Health.new(max_health)
 var _state_machine: StateMachine
+var _knockback := KnockbackState.new(self)
 
 func _ready() -> void:
 	var walk: SlimeWalk = SlimeWalk.new(self, speed)
 	_state_machine = StateMachine.new(walk, WALK)
+	_state_machine.add_state(_knockback, KNOCKBACK)
+	_knockback.finished.connect(func(): _state_machine.change_state(WALK))
 	
 	health.death.connect(_on_death)
 
@@ -49,14 +52,9 @@ func _on_death() -> void:
 func _on_hurt_box_damaged(damage: int, _force: Vector2, _duration: float) -> void:
 	health.health_point -= damage
 	facing = _force.sign().x
-	var knockback := KnockbackState.new(self, _force, 0.24)
 	
-	_state_machine.add_state(knockback, KNOCKBACK)
+	_knockback.setup(_force, _duration)
 	_state_machine.change_state(KNOCKBACK)
-	await knockback.finished
-	
-	_state_machine.change_state(WALK)
-	_state_machine.remove_state(KNOCKBACK)
 
 func _on_hitbox_hit_landed(_receiver: Node) -> void:
 	var self_pos = self.global_position 

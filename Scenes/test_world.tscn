@@ -977,6 +977,7 @@ position = Vector2(-612, -33)
 
 [node name="Player" parent="." unique_id=1724247843 instance=ExtResource("8_dqfvb")]
 position = Vector2(-311, -163)
+dash_curve = null
 
 [node name="Camera2D" type="Camera2D" parent="Player" unique_id=388927213]
 position = Vector2(161, 126)
@@ -989,4 +990,4 @@ position_smoothing_speed = 6.0
 position = Vector2(1688, -124)
 
 [node name="Kust" parent="." unique_id=1826992119 instance=ExtResource("7_p7j4p")]
-position = Vector2(289, 0)
+position = Vector2(235, -8)
