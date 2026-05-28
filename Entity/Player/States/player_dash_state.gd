@@ -22,6 +22,7 @@ func physics_update(_delta: float) -> void:
 	if _covered_distance >= _dash_distance or _player.is_on_wall():
 		if not Input.get_axis("left", "right"): _player.velocity.x = 0.0
 		finished.emit()
+		return
 	
 	var dash_velocity := Movement.get_move(_player.velocity, _player.facing, _dash_speed)
 	_player.velocity = dash_velocity * _player.dash_curve.sample(_covered_distance / _dash_distance)

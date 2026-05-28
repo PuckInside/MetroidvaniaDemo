@@ -12,7 +12,6 @@ var health_point: int:
 		
 		if health_point == 0:
 			death.emit()
-			return
 
 func _init(health: int) -> void:
 	max_health = health

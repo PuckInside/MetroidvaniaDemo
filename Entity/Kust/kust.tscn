@@ -70,7 +70,7 @@ size = Vector2(318.5, 27)
 size = Vector2(318, 254)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ea06a"]
-size = Vector2(337, 101)
+size = Vector2(337, 72)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wmk1v"]
 size = Vector2(318, 241)
@@ -143,7 +143,7 @@ script = ExtResource("6_q6cx6")
 metadata/_custom_type_script = "uid://d0urpb7583m53"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="HurtBox" unique_id=1726708140]
-position = Vector2(-0.5, -13.5)
+position = Vector2(-0.5, 1)
 shape = SubResource("RectangleShape2D_ea06a")
 
 [node name="Hitbox" type="Area2D" parent="." unique_id=341097065]

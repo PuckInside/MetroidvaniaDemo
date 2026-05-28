@@ -1,0 +1,54 @@
+[gd_scene format=3 uid="uid://chtq6gulvqd27"]
+
+[sub_resource type="GDScript" id="GDScript_xkdcy"]
+resource_name = "Ending"
+script/source = "extends Node2D
+
+const MENU_PATH = \"res://Scenes/menu.tscn\"
+
+@onready var timer: Timer = $Timer
+
+func _physics_process(_delta: float) -> void:
+	if Input.is_anything_pressed() and timer.is_stopped():
+		get_tree().call_deferred(\"change_scene_to_file\", MENU_PATH)
+"
+
+[node name="Ending" type="Node2D" unique_id=1052919760]
+script = SubResource("GDScript_xkdcy")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=157502715]
+
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer" unique_id=118717045]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 6
+size_flags_vertical = 6
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/MarginContainer" unique_id=2018744995]
+layout_mode = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="Label" type="Label" parent="CanvasLayer/MarginContainer/VBoxContainer" unique_id=1178689162]
+layout_mode = 2
+theme_override_font_sizes/font_size = 64
+text = "Конец демонстрационного проекта."
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label2" type="Label" parent="CanvasLayer/MarginContainer/VBoxContainer" unique_id=1007429278]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6941206, 0.6941206, 0.6941205, 1)
+theme_override_font_sizes/font_size = 32
+text = "Нажмите на любую кнопку, чтобы выйти."
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Timer" type="Timer" parent="." unique_id=1823723882]
+one_shot = true
+autostart = true

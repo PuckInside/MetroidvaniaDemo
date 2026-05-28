@@ -23,7 +23,8 @@ func setup(force: Vector2, duration: float):
 	_duration = duration
 
 func enter() -> void:
-	_body.velocity = _force_velocity
+	if _force_velocity:
+		_body.velocity = _force_velocity
 	_timer.start(_duration)
 
 func exit() -> void:

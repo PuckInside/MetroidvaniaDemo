@@ -210,7 +210,7 @@ _data = [Vector2(0, 0.9940284), 0.0, 0.0, 0, 0, Vector2(0.5128205, 0.89848405), 
 point_count = 4
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_eiw37"]
-size = Vector2(20, 1200)
+size = Vector2(228, 1200)
 
 [node name="Player" type="CharacterBody2D" unique_id=1724247843]
 script = ExtResource("1_x1f5c")
@@ -261,6 +261,7 @@ damage = 75
 metadata/_custom_type_script = "uid://ckwnd0fgcmkc8"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="rangeHitbox" unique_id=550181556]
+position = Vector2(0, -51)
 rotation = -1.5707964
 shape = SubResource("RectangleShape2D_eiw37")
 
